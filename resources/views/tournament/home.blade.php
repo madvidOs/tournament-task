@@ -86,7 +86,7 @@
                 url:"/create",
                 dataType: 'json',  
                 success: function(data){
-                    console.log(data);
+                    //console.log(data);
                     for (key in data['divisions']) {                        
                         var games = data['divisions'][key]['games'];
                         for (let i = 0; i < games.length; i++) {
