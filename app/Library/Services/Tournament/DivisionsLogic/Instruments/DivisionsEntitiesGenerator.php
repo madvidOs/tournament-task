@@ -9,7 +9,9 @@ class DivisionsEntitiesGenerator {
      *
      * @return array
      */
-    public static function createGamesResults(array $teams) {        
+    public function createGamesResults(array $teams) {
+
+        //print_r($teams);exit;
 
         $games = [];
 
@@ -17,7 +19,7 @@ class DivisionsEntitiesGenerator {
         $length = count($values);
         for ($i = 0; $i < $length; $i++) {
             for ($j = $i+1; $j < $length; $j++) {                
-                $games[] = self::generateGame($values[$i]['teamId'], $values[$j]['teamId']);
+                $games[] = $this->generateGame($values[$i]['teamId'], $values[$j]['teamId']);
             }    
         }        
 
@@ -29,7 +31,7 @@ class DivisionsEntitiesGenerator {
      *
      * @return array
      */
-    public static function countScore(array $games) {
+    public function countScore(array $games) {
         $score = [];            
 
         foreach($games as $game) {
@@ -55,7 +57,7 @@ class DivisionsEntitiesGenerator {
      *
      * @return array
      */
-    public static function countPositions(array $score) {
+    public function countPositions(array $score) {
         //create position order
         arsort($score);
 
@@ -80,7 +82,7 @@ class DivisionsEntitiesGenerator {
      *
      * @return array
      */
-    private static function generateGame($team1, $team2) {
+    private function generateGame($team1, $team2) {
         $goalsTeam1 = random_int(0,1);
         $goalsTeam2 = (int)!$goalsTeam1;
 

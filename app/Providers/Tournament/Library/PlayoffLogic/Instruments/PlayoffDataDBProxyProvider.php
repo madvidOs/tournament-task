@@ -4,8 +4,10 @@ namespace App\Providers\Tournament\Library\PlayoffLogic\Instruments;
 
 use Illuminate\Support\ServiceProvider;
 use App\Library\Services\Tournament\PlayoffLogic\Instruments\PlayoffDataDBProxy as Model;
-use App\Repositories\Tournament\DivisionRepository;
-use App\Repositories\Tournament\DivisionTeamRepository;
+use App\Repositories\Tournament\PlayoffBracketRepository;
+use App\Repositories\Tournament\PlayoffGameRepository;
+use App\Repositories\Tournament\PlayoffParticipantRepository;
+use App\Repositories\Tournament\PlayoffWinnerRepository;
 
 class PlayoffDataDBProxyProvider extends ServiceProvider
 {
@@ -18,8 +20,10 @@ class PlayoffDataDBProxyProvider extends ServiceProvider
     {
         $this->app->singleton(Model::class, function ($app) {
             return new Model(
-                $app->make(DivisionRepository::class),
-                $app->make(DivisionTeamRepository::class),
+                $app->make(PlayoffBracketRepository::class),
+                $app->make(PlayoffParticipantRepository::class),
+                $app->make(PlayoffGameRepository::class),
+                $app->make(PlayoffWinnerRepository::class),
             );    
         });
     }

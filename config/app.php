@@ -190,6 +190,7 @@ return [
         App\Providers\Tournament\Library\DivisionsManagerProvider::class,
         App\Providers\Tournament\Library\DivisionsLogic\DivisionsInfoProvider::class,
         App\Providers\Tournament\Library\DivisionsLogic\Instruments\DivisionsDataDBProxyProvider::class,
+        App\Providers\Tournament\Library\DivisionsLogic\Instruments\DivisionsDataDBPreparationProvider::class,
 
         App\Providers\Tournament\Library\PlayoffManagerProvider::class,
         App\Providers\Tournament\Library\PlayoffLogic\PlayoffInfoProvider::class,

@@ -8,6 +8,24 @@ use App\Repositories\Tournament\PlayoffParticipantRepository;
 use App\Repositories\Tournament\PlayoffWinnerRepository;
 
 class PlayoffDataDBProxy {
+    private PlayoffBracketRepository $playoffBracketRepository;
+    private PlayoffParticipantRepository $playoffParticipantRepository;
+    private PlayoffGameRepository $playoffGameRepository;
+    private PlayoffWinnerRepository $playoffWinnerRepository;
+
+    public function __construct(
+        PlayoffBracketRepository $playoffBracketRepository,
+        PlayoffParticipantRepository $playoffParticipantRepository,
+        PlayoffGameRepository $playoffGameRepository,
+        PlayoffWinnerRepository $playoffWinnerRepository
+    ) {
+        $this->playoffBracketRepository = $playoffBracketRepository;
+        $this->playoffParticipantRepository = $playoffParticipantRepository;
+        $this->playoffGameRepository = $playoffGameRepository;
+        $this->playoffWinnerRepository = $playoffWinnerRepository;
+
+    }
+
     
     /**
      * Insert bracket
@@ -15,8 +33,8 @@ class PlayoffDataDBProxy {
      */
     public function insertBracket(array $bracket) {        
 
-        PlayoffBracketRepository::truncate();
-        PlayoffBracketRepository::insert($bracket);
+        $this->playoffBracketRepository->truncate();
+        $this->playoffBracketRepository->insert($bracket);        
         
     }    
 
@@ -26,8 +44,8 @@ class PlayoffDataDBProxy {
      */
     public function insertParticipants(array $participants) {        
 
-        PlayoffParticipantRepository::truncate();
-        PlayoffParticipantRepository::insert($participants);
+        $this->playoffParticipantRepository->truncate();
+        $this->playoffParticipantRepository->insert($participants);        
         
     }    
 
@@ -37,8 +55,8 @@ class PlayoffDataDBProxy {
      */
     public function insertGames(array $games) {        
 
-        PlayoffGameRepository::truncate();
-        PlayoffGameRepository::insert($games);
+        $this->playoffGameRepository->truncate();
+        $this->playoffGameRepository->insert($games);        
         
     }
 
@@ -48,9 +66,8 @@ class PlayoffDataDBProxy {
      */
     public function insertWinners(array $winners) {
 
-        PlayoffWinnerRepository::truncate();
-        PlayoffWinnerRepository::insert($winners);
-        
+        $this->playoffWinnerRepository->truncate();
+        $this->playoffWinnerRepository->insert($winners);        
     }
     
 }

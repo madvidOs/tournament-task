@@ -25,6 +25,7 @@ class TournamentController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Library\Services\Tournament\DivisionsManager  $divisionsManager
+     * @param  \App\Library\Services\Tournament\PlayoffManager $playoffManager
      * @return \Illuminate\Http\JsonResponse
      */
     public function create(
@@ -33,15 +34,15 @@ class TournamentController extends Controller
         PlayoffManager $playoffManager
     ) {       
         //check request if ajax and json
-        /*if (!$request->ajax() && !$request->expectsJson()) {
+        if (!$request->ajax() && !$request->expectsJson()) {
             abort(403);
-        }*/
+        }
 
-        $divisionGamesResult = $divisionsManager->getGamesResults();        
-        $plaoffGameResults = $playoffManager->getGamesResults();
+        $divisionsResults = $divisionsManager->getGamesResults();        
+        $playoffResults = $playoffManager->getGamesResults();
 
-        $result = array_merge($divisionGamesResult, $plaoffGameResults);
-        //dd($result);
+        //union of results
+        $result = array_merge($divisionsResults, $playoffResults);
 
         return response()->json($result);
     }   

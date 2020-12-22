@@ -9,7 +9,9 @@ class PlayoffDataDBPreparation{
      *
      * @return array
      */
-    public static function getBracketDataForInsert(array $bracket) {        
+    public function getBracketDataForInsert(array $bracket) {    
+        
+        //var_dump($bracket);
 
         $result = [];
         foreach ($bracket as $bracket) {
@@ -22,6 +24,8 @@ class PlayoffDataDBPreparation{
             }    
         }
 
+        //var_dump($result);exit;
+
         return $result;
     }    
 
@@ -30,9 +34,10 @@ class PlayoffDataDBPreparation{
      *
      * @return array
      */
-    public static function getParticipantsDataForInsert(array $participants) {        
+    public function getParticipantsDataForInsert(array $participants) {        
 
         $result = [];
+        //var_dump($participants);
         foreach ($participants as $p) {
             $result[] = [
                 'id_team' => $p['idTeam'],
@@ -40,6 +45,8 @@ class PlayoffDataDBPreparation{
                 'position' => $p['position'],
             ];            
         }
+
+        //var_dump($result);exit;
 
         return $result;
     }    
@@ -49,9 +56,10 @@ class PlayoffDataDBPreparation{
      *
      * @return array
      */
-    public static function getGamesDataForInsert(array $games) {        
+    public function getGamesDataForInsert(array $games) {        
 
         $result = [];
+        //var_dump($games);
         foreach ($games as $game) {
             foreach ($game as $g) {
                 $result[] = [
@@ -64,6 +72,8 @@ class PlayoffDataDBPreparation{
             }    
         }
 
+        //var_dump($result);exit;
+
         return $result;
     }
 
@@ -72,15 +82,18 @@ class PlayoffDataDBPreparation{
      *
      * @return array
      */
-    public static function getWinnersDataForInsert(array $winners) {        
+    public function getWinnersDataForInsert(array $winners) {        
 
         $result = [];
+        //var_dump($winners);
         foreach ($winners as $w) {
             $result[] = [
                 'id_team' => $w['idTeam'],                
                 'position' => $w['position'],
             ];            
         }
+
+        //var_dump($result);exit;
 
         return $result;
     }

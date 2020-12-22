@@ -9,6 +9,8 @@ use App\Library\Services\Tournament\DivisionsLogic\Instruments\DivisionsDataDBPr
 class DivisionsInfo {
 
     private DivisionsDataDBProxy $divisionsDataDBProxy;
+    private DivisionsEntitiesGenerator $divisionsEntitiesGenerator;
+    private DivisionsDataDBPreparation $divisionsDataDBPreparation;
 
     private $divisions;
     private $allTeams;
@@ -19,18 +21,21 @@ class DivisionsInfo {
     private $positionsByDivision;    
 
     public function __construct(
-        DivisionsDataDBProxy $divisionsDataDBProxy
+        DivisionsDataDBProxy $divisionsDataDBProxy,
+        DivisionsEntitiesGenerator $divisionsEntitiesGenerator,
+        DivisionsDataDBPreparation $divisionsDataDBPreparation
     ) {
         $this->divisionsDataDBProxy = $divisionsDataDBProxy;
+        $this->divisionsEntitiesGenerator = $divisionsEntitiesGenerator;
+        $this->divisionsDataDBPreparation = $divisionsDataDBPreparation;
     }
 
     /**
      * Set Up divisions 
      *
-     * @return array
      */
     public function setUpDivisions() {
-        $divisions = $this->divisionsDataDBProxy->getDivisions();
+        $divisions = $this->divisionsDataDBProxy->getDivisions();        
         $result = [];
         
         foreach($divisions as $d) {
@@ -40,7 +45,7 @@ class DivisionsInfo {
             ];            
         }
 
-        $this->divisions = $result;
+        $this->divisions = $result;        
     }
 
     /**
@@ -51,10 +56,12 @@ class DivisionsInfo {
         
         $result = [];
         $teams_ = [];
-        $teams = $this->divisionsDataDBProxy->getTeams();        
+        $teams = $this->divisionsDataDBProxy->getTeams();
+
+        //var_dump($this->divisionsDataDBProxy);
         
         foreach ($teams as $team) {            
-            if (!empty($this->divisions[$team->id_division])) {
+            if (!empty($this->divisions[$team->id_division])) { 
                 $result[$team->id_division][$team->id] = [
                     'teamId' => $team->id,
                     'divisionId' => $team->id_division,
@@ -76,9 +83,13 @@ class DivisionsInfo {
      * Set Up games 
      *     
      */
-    public function setUpGames() {
+    public function setUpGames() {        
         foreach ($this->divisions as $division) {
-            $this->gamesByDivision[$division['divisionId']] = DivisionsEntitiesGenerator::createGamesResults($this->teamsByDivision[$division['divisionId']]);
+            $divisionId = $division['divisionId'];            
+            $this->gamesByDivision[$divisionId] = 
+            $this->divisionsEntitiesGenerator->createGamesResults(
+                    $this->teamsByDivision[$divisionId]
+            );            
         }
     }
 
@@ -88,7 +99,11 @@ class DivisionsInfo {
      */
     public function setUpScore() {        
         foreach ($this->divisions as $division) {
-            $this->scoreByDivision[$division['divisionId']] = DivisionsEntitiesGenerator::countScore($this->gamesByDivision[$division['divisionId']]);
+            $divisionId = $division['divisionId'];
+            $this->scoreByDivision[$divisionId] = 
+            $this->divisionsEntitiesGenerator->countScore(
+                    $this->gamesByDivision[$divisionId]
+            );
         }        
     }
 
@@ -98,13 +113,18 @@ class DivisionsInfo {
      */
     public function setUpPositions() {
         foreach ($this->divisions as $division) {
-            $this->positionsByDivision[$division['divisionId']] = DivisionsEntitiesGenerator::countPositions($this->scoreByDivision[$division['divisionId']]);
+            $divisionId = $division['divisionId'];
+            $this->positionsByDivision[$divisionId] =
+            $this->divisionsEntitiesGenerator->countPositions(
+                    $this->scoreByDivision[$divisionId]
+            );
         }
     }
 
     /**
      * Get divisions
-     *     
+     *
+     * return array     
      */
     public function getDivisions() {
         return $this->divisions;
@@ -113,15 +133,35 @@ class DivisionsInfo {
     /**
      * Get all teams
      *     
+     * return array
      */
     public function getAllTeams() {
         return $this->allTeams;
     }
 
+    /**
+     * Get teams By division
+     *     
+     * return array
+     */
+    public function getTeamsByDivision() {
+        return $this->teamsByDivision;
+    }
+
+    /**
+     * Get games
+     *   
+     * return array
+     */
+    public function getGamesByDivision() {
+        return $this->gamesByDivision;
+    }
+
 
     /**
      * Get score
-     *     
+     *   
+     * return array
      */
     public function getScore() {
         return $this->scoreByDivision;
@@ -131,26 +171,30 @@ class DivisionsInfo {
     /**
      * Get positions
      *     
+     * return array
      */
     public function getPositions() {
         return $this->positionsByDivision;
-    }
-
-    
+    }    
     
 
     /**
      * write division data to DB
      *     
      */
-    public function writeDataToDB() {        
+    public function writeDataToDB() {
 
         //games        
-        $insert = DivisionsDataDBPreparation::getGamesDataForInsert($this->gamesByDivision);
+        $insert = $this->divisionsDataDBPreparation->getGamesDataForInsert(
+            $this->gamesByDivision
+        );
         $this->divisionsDataDBProxy->insertGames($insert);   
 
         //positions
-        $insert = DivisionsDataDBPreparation::getPositionsDataForInsert($this->scoreByDivision, $this->positionsByDivision);
+        $insert = $this->divisionsDataDBPreparation->getPositionsDataForInsert(
+            $this->scoreByDivision, 
+            $this->positionsByDivision
+        );
         $this->divisionsDataDBProxy->insertPositions($insert);        
     }
 
@@ -163,28 +207,30 @@ class DivisionsInfo {
         $result = [];
 
         foreach ($this->divisions as $division) {
-            $result['divisions'][$division['divisionId']] = $division;
+            $divisionId = $division['divisionId'];
+            $result[$divisionId] = $division;
 
             if (in_array('teams', $items)) {
-                $result['divisions'][$division['divisionId']]['teams'] =
-                    $this->teamsByDivision[$division['divisionId']];
+                $result[$divisionId]['teams'] = 
+                    $this->teamsByDivision[$divisionId];
             }
 
             if (in_array('games', $items)) {
-                $result['divisions'][$division['divisionId']]['games'] =
-                    $this->gamesByDivision[$division['divisionId']];
+                $result[$divisionId]['games'] = 
+                    $this->gamesByDivision[$divisionId];
             }
 
             if (in_array('score', $items)) {                
-                $result['divisions'][$division['divisionId']]['score'] =
-                    $this->scoreByDivision[$division['divisionId']];
+                $result[$divisionId]['score'] = 
+                    $this->scoreByDivision[$divisionId];
             }
 
             if (in_array('positions', $items)) {
-                $result['divisions'][$division['divisionId']]['positions'] =
-                    $this->positionsByDivision[$division['divisionId']];
+                $result[$divisionId]['positions'] = 
+                    $this->positionsByDivision[$divisionId];
             }
         }
-        return $result;
+        
+        return ['divisions' => $result];
     }
 }

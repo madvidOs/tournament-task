@@ -9,7 +9,7 @@ class DivisionsDataDBPreparation {
      *
      * @return array
      */
-    public static function getGamesDataForInsert(array $games) {        
+    public function getGamesDataForInsert(array $games) {        
 
         $result = [];
         foreach ($games as $divisionId => $gamesArray) {
@@ -34,7 +34,7 @@ class DivisionsDataDBPreparation {
      *
      * @return array
      */
-    public static function getPositionsDataForInsert(array $score, array $positions) {        
+    public function getPositionsDataForInsert(array $score, array $positions) {        
 
         $result = [];
 

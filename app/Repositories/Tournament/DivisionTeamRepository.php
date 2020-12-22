@@ -22,12 +22,12 @@ class DivisionTeamRepository implements RepositoryInterface
         return Model::all();
     }
 
-    public static function truncate()
+    public function truncate()
     {
         Model::truncate();
     }
 
-    public static function insert(array $arr)
+    public function insert(array $arr)
     {
         Model::insert($arr);
     }

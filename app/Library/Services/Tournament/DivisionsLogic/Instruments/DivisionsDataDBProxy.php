@@ -11,13 +11,19 @@ class DivisionsDataDBProxy {
 
     private DivisionRepository $divisionRepository;
     private DivisionTeamRepository $divisionTeamRepository;
+    private DivisionGameRepository $divisionGameRepository;
+    private DivisionPositionRepository $divisionPositionRepository;
 
-    public function __construct(        
+    public function __construct(
             DivisionRepository $divisionRepository,
-            DivisionTeamRepository $divisionTeamRepository        
+            DivisionTeamRepository $divisionTeamRepository,
+            DivisionGameRepository $divisionGameRepository,
+            DivisionPositionRepository $divisionPositionRepository        
     ) {
         $this->divisionRepository = $divisionRepository;
         $this->divisionTeamRepository = $divisionTeamRepository;
+        $this->divisionGameRepository = $divisionGameRepository;
+        $this->divisionPositionRepository = $divisionPositionRepository;
     }
 
     /**
@@ -30,7 +36,7 @@ class DivisionsDataDBProxy {
     }
 
     /**
-     * Get divisions 
+     * Get teams 
      *
      * @return Collection
      */
@@ -44,9 +50,8 @@ class DivisionsDataDBProxy {
      */
     public function insertGames(array $games) {
 
-        DivisionGameRepository::truncate();
-        DivisionGameRepository::insert($games);
-        
+        $this->divisionGameRepository->truncate();
+        $this->divisionGameRepository->insert($games);        
     }
 
     /**
@@ -55,8 +60,8 @@ class DivisionsDataDBProxy {
      */
     public function insertPositions(array $positions) {
 
-        DivisionPositionRepository::truncate();
-        DivisionPositionRepository::insert($positions);        
+        $this->divisionPositionRepository->truncate();
+        $this->divisionPositionRepository->insert($positions);        
     }
     
 }

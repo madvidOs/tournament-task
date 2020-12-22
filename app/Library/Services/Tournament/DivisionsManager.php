@@ -23,9 +23,7 @@ class DivisionsManager {
     public function getDivisionsWithParticipants() {
 
         $this->divisionsInfo->setUpDivisions();
-        $this->divisionsInfo->setUpTeams();   
-        
-        //dd($this->divisionsInfo->getResponse(['teams']));
+        $this->divisionsInfo->setUpTeams();        
 
         return $this->divisionsInfo->getResponse(['teams']);
     }

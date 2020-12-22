@@ -10,6 +10,8 @@ use App\Library\Services\Tournament\PlayoffLogic\Instruments\PlayoffEntitiesGene
 class PlayoffInfo {
     private DivisionsInfo $divisionsInfo;
     private PlayoffDataDBProxy $playoffDataDBProxy;        
+    private PlayoffEntitiesGenerator $playoffEntitiesGenerator;
+    private PlayoffDataDBPreparation $playoffDataDBPreparation;
 
     private $participants;    
     private $bracket;
@@ -20,40 +22,58 @@ class PlayoffInfo {
 
     public function __construct(
         DivisionsInfo $divisionsInfo,
-        PlayoffDataDBProxy $playoffDataDBProxy
+        PlayoffDataDBProxy $playoffDataDBProxy,
+        PlayoffEntitiesGenerator $playoffEntitiesGenerator,
+        PlayoffDataDBPreparation $playoffDataDBPreparation
     ) {
         $this->divisionsInfo = $divisionsInfo;
-        $this->playoffDataDBProxy = $playoffDataDBProxy;        
+        $this->playoffDataDBProxy = $playoffDataDBProxy;
+        $this->playoffEntitiesGenerator = $playoffEntitiesGenerator;        
+        $this->playoffDataDBPreparation = $playoffDataDBPreparation;
     }
 
     /**
-     * set up participants
-     *
-     * @return array
+     * Set up participants
+     *     
      */
     public function setUpParticipants() {
         $divisionPositions = $this->divisionsInfo->getPositions();        
-        $this->participants = PlayoffEntitiesGenerator::getParticipants($divisionPositions);        
+        $this->participants = $this->playoffEntitiesGenerator
+            ->getParticipants($divisionPositions);        
     }
 
     /**
-     * set up bracket
-     *
-     * @return array
+     * Set up bracket
+     *     
      */
-    public function setUpBracket() {        
+    public function setUpBracket() {
         
         $bracket = [];
         $games   = [];        
 
-        $bracket[1] = PlayoffEntitiesGenerator::getLevel1Bracket($this->participants);        
-        $games[1] = PlayoffEntitiesGenerator::createGamesResults($bracket[1]);
+        //level 1 generation data
+        $bracket[1] = $this->playoffEntitiesGenerator->getLevel1Bracket(
+            $this->participants
+        );        
+        $games[1] = $this->playoffEntitiesGenerator->createGamesResults(
+            $bracket[1]
+        );
 
-        $bracket[2] = PlayoffEntitiesGenerator::getLevel2Bracket($games[1]);
-        $games[2] = PlayoffEntitiesGenerator::createGamesResults($bracket[2]);
+        //level 2 generation data (semi-final)
+        $bracket[2] = $this->playoffEntitiesGenerator->getLevel2Bracket(
+            $games[1]
+        );
+        $games[2] = $this->playoffEntitiesGenerator->createGamesResults(
+            $bracket[2]
+        );
 
-        $bracket[3] = PlayoffEntitiesGenerator::getLevel3Bracket($games[2]);
-        $games[3] = PlayoffEntitiesGenerator::createGamesResults($bracket[3]);        
+        //level 3 generation data (final)
+        $bracket[3] = $this->playoffEntitiesGenerator->getLevel3Bracket(
+            $games[2]
+        );
+        $games[3] = $this->playoffEntitiesGenerator->createGamesResults(
+            $bracket[3]
+        );        
 
         $this->bracket = $bracket;
         $this->games   = $games;
@@ -62,22 +82,25 @@ class PlayoffInfo {
     /**
      * set up winners
      *
-     * @return array
      */
     public function setUpWinners() {
-        $this->winners = PlayoffEntitiesGenerator::getWinners($this->games[3]);        
+        $this->winners = $this->playoffEntitiesGenerator->getWinners(
+            $this->games[3]
+        );        
     }
 
     /**
      * set up teams names
-     *
-     * @return array
+     *     
      */
     public function setUpTeamsNames() {        
 
         $teams = $this->divisionsInfo->getAllTeams();  
         $divisions = $this->divisionsInfo->getDivisions(); 
-        $teamsNames = PlayoffEntitiesGenerator::getTeamsNames($divisions, $teams);
+        $teamsNames = $this->playoffEntitiesGenerator->getTeamsNames(
+            $divisions, 
+            $teams
+        );
         
         $this->teamsNames = $teamsNames;
     }
@@ -90,19 +113,27 @@ class PlayoffInfo {
      */
     public function writeDataToDB() {
         //participants        
-        $insert = PlayoffDataDBPreparation::getParticipantsDataForInsert($this->participants);
+        $insert = $this->playoffDataDBPreparation->getParticipantsDataForInsert(
+            $this->participants
+        );
         $this->playoffDataDBProxy->insertParticipants($insert);        
         
         //bracket
-        $insert = PlayoffDataDBPreparation::getBracketDataForInsert($this->bracket);
+        $insert = $this->playoffDataDBPreparation->getBracketDataForInsert(
+            $this->bracket
+        );
         $this->playoffDataDBProxy->insertBracket($insert);
 
         //games        
-        $insert = PlayoffDataDBPreparation::getGamesDataForInsert($this->games);
+        $insert = $this->playoffDataDBPreparation->getGamesDataForInsert(
+            $this->games
+        );
         $this->playoffDataDBProxy->insertGames($insert);
 
         //winners
-        $insert = PlayoffDataDBPreparation::getWinnersDataForInsert($this->winners);
+        $insert = $this->playoffDataDBPreparation->getWinnersDataForInsert(
+            $this->winners
+        );
         $this->playoffDataDBProxy->insertWinners($insert);
     }
 
@@ -112,6 +143,7 @@ class PlayoffInfo {
      * @return array
      */
     public function getResponse(array $items) {
+        
         $result = [];
 
         if (in_array('bracket', $items)) {

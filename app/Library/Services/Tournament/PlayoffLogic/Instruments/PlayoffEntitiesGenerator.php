@@ -9,7 +9,7 @@ class PlayoffEntitiesGenerator {
      *
      * @return array
      */
-    public static function getParticipants(array $positions) {        
+    public function getParticipants(array $positions) {        
 
         $result = [];
         foreach($positions as $divisionId =>  $dp) {
@@ -33,7 +33,7 @@ class PlayoffEntitiesGenerator {
      *
      * @return array
      */
-    public static function getLevel1Bracket(array $participants) {            
+    public function getLevel1Bracket(array $participants) {            
 
         $result = [];
         foreach ($participants as $p) {
@@ -58,7 +58,7 @@ class PlayoffEntitiesGenerator {
      *
      * @return array
      */
-    public static function getLevel2Bracket(array $games) {       
+    public function getLevel2Bracket(array $games) {       
 
         //var_dump($games);
 
@@ -82,7 +82,7 @@ class PlayoffEntitiesGenerator {
             }            
         }
         
-        //dd($result);
+        //var_dump($result);exit;
 
         return $result;
     }     
@@ -92,10 +92,10 @@ class PlayoffEntitiesGenerator {
      *
      * @return array
      */
-    public static function getLevel3Bracket(array $games) {            
+    public function getLevel3Bracket(array $games) {            
 
         $result = [];
-        //dd($games);
+        //var_dump($games);
         foreach ($games as $g) {
 
             if ($g['goalTeam1'] > $g['goalTeam2']) {
@@ -123,7 +123,7 @@ class PlayoffEntitiesGenerator {
             }            
         }
         
-        //dd($result);
+        //var_dump($result);exit;
 
         return $result;
     }  
@@ -133,9 +133,10 @@ class PlayoffEntitiesGenerator {
      *
      * @return array
      */
-    public static function getWinners(array $games) {            
+    public function getWinners(array $games) {            
 
-        $result = [];        
+        $result = [];      
+        //var_dump($games);
         foreach ($games as $g) {            
             $counter = $g['idGroup'] == 1
                 ? 1
@@ -163,7 +164,7 @@ class PlayoffEntitiesGenerator {
             }
         }
         
-        //dd($result);
+        //var_dump($result);exit;
 
         return $result;
     }
@@ -173,14 +174,17 @@ class PlayoffEntitiesGenerator {
      *
      * @return array
      */
-    public static function getTeamsNames(array $divisions, array $teams) {
-        $result = [];        
+    public function getTeamsNames(array $divisions, array $teams) {
+        $result = [];   
+        //var_dump($divisions, $teams);
         foreach ($teams as $team) {            
             $result[$team['teamId']] = [
                 'idTeam' => $team['teamId'],                
                 'teamName' => $team['teamName'] . ' (Division ' . $divisions[$team['divisionId']]['divisionName'] . ')',
             ];
         }
+
+        //var_dump($result);exit;
 
         return $result;
     }
@@ -190,7 +194,9 @@ class PlayoffEntitiesGenerator {
      *
      * @return array
      */
-    public static function createGamesResults(array $teams) {        
+    public function createGamesResults(array $teams) {     
+        
+        //var_dump($teams);
 
         $games = [];        
 
@@ -198,7 +204,7 @@ class PlayoffEntitiesGenerator {
         foreach ($teams as $team) {
             //var_dump($team);
             if (isset($tmp[$team['idGroup']])) {
-                $games[$team['idGroup']] = self::generateGame($tmp[$team['idGroup']]['idTeam'], $team['idTeam'], $team['idGroup']);
+                $games[$team['idGroup']] = $this->generateGame($tmp[$team['idGroup']]['idTeam'], $team['idTeam'], $team['idGroup']);
                 //var_dump($games);
             } else {
                 $tmp[$team['idGroup']] = $team;
@@ -206,6 +212,8 @@ class PlayoffEntitiesGenerator {
         }        
         
         ksort($games);
+
+        //var_dump($games);exit;
 
         return $games;
     }         
@@ -216,7 +224,7 @@ class PlayoffEntitiesGenerator {
      *
      * @return array
      */
-    private static function generateGame($team1, $team2, $groupId) {
+    private function generateGame($team1, $team2, $groupId) {
         $goalsTeam1 = random_int(0,1);
         $goalsTeam2 = (int)!$goalsTeam1;
 
