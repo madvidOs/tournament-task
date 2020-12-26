@@ -2,18 +2,18 @@
 
 namespace Tests\Unit\Tournament;
 
-use App\Library\Services\Tournament\DivisionsLogic\DivisionsInfo;
-use App\Library\Services\Tournament\DivisionsManager;
+use App\Src\Tournament\Services\DivisionsLogic\InfoBuilder;
+use App\Src\Tournament\Services\DivisionsManager;
 use PHPUnit\Framework\TestCase;
 
 class DivisionsManagerTest extends TestCase
 {
 
-    protected $divisionsInfoStack;
+    protected $infoBuilderMock;
 
     protected function setUp(): void
     {        
-        $this->divisionsInfoStack = $this->getMockBuilder(DivisionsInfo::class)
+        $this->infoBuilderMock = $this->getMockBuilder(InfoBuilder::class)
             ->disableOriginalConstructor()
             ->onlyMethods([
                 'setUpDivisions',
@@ -28,7 +28,7 @@ class DivisionsManagerTest extends TestCase
 
     protected function tearDown():void
     {
-       
+        
     }
 
 
@@ -39,17 +39,17 @@ class DivisionsManagerTest extends TestCase
      */
     public function testGetDivisionsWithParticipants()
     {        
-        $this->divisionsInfoStack->expects($this->once())
+        $this->infoBuilderMock->expects($this->once())
             ->method('setUpDivisions');
         
-        $this->divisionsInfoStack->expects($this->once())
+        $this->infoBuilderMock->expects($this->once())
             ->method('setUpTeams');        
 
-        $this->divisionsInfoStack->expects($this->once())
+        $this->infoBuilderMock->expects($this->once())
             ->method('getResponse')
             ->with($this->equalTo(['teams']));
         
-        $divisionsManager = new DivisionsManager($this->divisionsInfoStack);
+        $divisionsManager = new DivisionsManager($this->infoBuilderMock);
         $divisionsManager->getDivisionsWithParticipants();    
 
     }
@@ -61,29 +61,29 @@ class DivisionsManagerTest extends TestCase
      */
     public function testGetGamesResults()
     {
-        $this->divisionsInfoStack->expects($this->once())
+        $this->infoBuilderMock->expects($this->once())
             ->method('setUpDivisions');
         
-        $this->divisionsInfoStack->expects($this->once())
+        $this->infoBuilderMock->expects($this->once())
             ->method('setUpTeams');    
 
-        $this->divisionsInfoStack->expects($this->once())
+        $this->infoBuilderMock->expects($this->once())
             ->method('setUpGames');    
         
-        $this->divisionsInfoStack->expects($this->once())
+        $this->infoBuilderMock->expects($this->once())
             ->method('setUpScore');
         
-        $this->divisionsInfoStack->expects($this->once())
+        $this->infoBuilderMock->expects($this->once())
             ->method('setUpPositions');    
 
-        $this->divisionsInfoStack->expects($this->once())
+        $this->infoBuilderMock->expects($this->once())
             ->method('writeDataToDB');    
         
-        $this->divisionsInfoStack->expects($this->once())
+        $this->infoBuilderMock->expects($this->once())
             ->method('getResponse')
             ->with($this->equalTo(['teams', 'games', 'score', 'positions']));
         
-        $divisionsManager = new DivisionsManager($this->divisionsInfoStack);
+        $divisionsManager = new DivisionsManager($this->infoBuilderMock);
         $divisionsManager->getGamesResults();    
 
     }

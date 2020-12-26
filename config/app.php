@@ -100,7 +100,7 @@ return [
     | Faker Locale
     |--------------------------------------------------------------------------
     |
-    | This locale will be used by the Faker PHP library when generating fake
+    | This locale will be used by the Faker PHP Services when generating fake
     | data for your database seeds. For example, this will be used to get
     | localized telephone numbers, street address information and more.
     |
@@ -178,23 +178,23 @@ return [
         /*
          * Tournament Service Providers...
          */        
-        App\Providers\Tournament\DivisionRepositoryProvider::class,
-        App\Providers\Tournament\DivisionTeamRepositoryProvider::class,        
-        App\Providers\Tournament\DivisionGameRepositoryProvider::class,
-        App\Providers\Tournament\DivisionPositionRepositoryProvider::class,
-        App\Providers\Tournament\PlayoffBracketRepositoryProvider::class,
-        App\Providers\Tournament\PlayoffGameRepositoryProvider::class,
-        App\Providers\Tournament\PlayoffParticipantRepositoryProvider::class,
-        App\Providers\Tournament\PlayoffWinnerRepositoryProvider::class,
+        App\Src\Tournament\Providers\DivisionRepositoryProvider::class,
+        // App\Src\Tournament\Providers\DivisionTeamRepositoryProvider::class,        
+        // App\Src\Tournament\Providers\DivisionGameRepositoryProvider::class,
+        // App\Src\Tournament\Providers\DivisionPositionRepositoryProvider::class,
+        // App\Src\Tournament\Providers\PlayoffBracketRepositoryProvider::class,
+        // App\Src\Tournament\Providers\PlayoffGameRepositoryProvider::class,
+        // App\Src\Tournament\Providers\PlayoffParticipantRepositoryProvider::class,
+        // App\Src\Tournament\Providers\PlayoffWinnerRepositoryProvider::class,
         
-        App\Providers\Tournament\Library\DivisionsManagerProvider::class,
-        App\Providers\Tournament\Library\DivisionsLogic\DivisionsInfoProvider::class,
-        App\Providers\Tournament\Library\DivisionsLogic\Instruments\DivisionsDataDBProxyProvider::class,
-        App\Providers\Tournament\Library\DivisionsLogic\Instruments\DivisionsDataDBPreparationProvider::class,
+        App\Src\Tournament\Providers\Services\DivisionsManagerProvider::class,
+        App\Src\Tournament\Providers\Services\DivisionsLogic\InfoBuilderProvider::class,
+        //App\Src\Tournament\Providers\Services\DivisionsLogic\Instruments\DivisionsDataDBProxyProvider::class,
+        //App\Src\Tournament\Providers\Services\DivisionsLogic\Instruments\DivisionsDataDBPreparationProvider::class,
 
-        App\Providers\Tournament\Library\PlayoffManagerProvider::class,
-        App\Providers\Tournament\Library\PlayoffLogic\PlayoffInfoProvider::class,
-        App\Providers\Tournament\Library\PlayoffLogic\Instruments\PlayoffDataDBProxyProvider::class,
+        App\Src\Tournament\Providers\Services\PlayoffManagerProvider::class,
+        //App\Src\Tournament\Providers\Services\PlayoffLogic\InfoBuilderProvider::class,
+        //App\Src\Tournament\Providers\Services\PlayoffLogic\Instruments\DataDBProxyProvider::class,
 
     ],
 

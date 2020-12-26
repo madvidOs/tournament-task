@@ -2,17 +2,17 @@
 
 namespace Tests\Unit\Tournament;
 
-use App\Library\Services\Tournament\PlayoffLogic\PlayoffInfo;
-use App\Library\Services\Tournament\PlayoffManager;
+use App\Src\Tournament\Services\PlayoffLogic\InfoBuilder;
+use App\Src\Tournament\Services\PlayoffManager;
 use PHPUnit\Framework\TestCase;
 
 class PlayoffManagerTest extends TestCase
 {
-    protected $playoffInfoMock;
+    protected $infoBuilderMock;
 
     protected function setUp(): void
     {        
-        $this->playoffInfoMock = $this->getMockBuilder(PlayoffInfo::class)
+        $this->infoBuilderMock = $this->getMockBuilder(InfoBuilder::class)
             ->disableOriginalConstructor()
             ->onlyMethods([
                 'setUpParticipants',
@@ -37,27 +37,27 @@ class PlayoffManagerTest extends TestCase
      */
     public function testGetGamesResults()
     {
-        $playoffInfoMock = $this->playoffInfoMock;
-        $playoffInfoMock->expects($this->once())
+        $infoBuilderMock = $this->infoBuilderMock;
+        $infoBuilderMock->expects($this->once())
             ->method('setUpParticipants');
         
-        $playoffInfoMock->expects($this->once())
+        $infoBuilderMock->expects($this->once())
             ->method('setUpBracket');    
 
-        $playoffInfoMock->expects($this->once())
+        $infoBuilderMock->expects($this->once())
             ->method('setUpWinners');    
         
-        $playoffInfoMock->expects($this->once())
+        $infoBuilderMock->expects($this->once())
             ->method('setUpTeamsNames');
         
-        $playoffInfoMock->expects($this->once())
+        $infoBuilderMock->expects($this->once())
             ->method('writeDataToDB');    
         
-        $playoffInfoMock->expects($this->once())
+        $infoBuilderMock->expects($this->once())
             ->method('getResponse')
             ->with($this->equalTo(['bracket', 'games', 'winners', 'teamNames']));
         
-        $playoffManager = new PlayoffManager($playoffInfoMock);
+        $playoffManager = new PlayoffManager($infoBuilderMock);
         $playoffManager->getGamesResults();
 
     }

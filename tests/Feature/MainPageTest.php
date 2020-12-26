@@ -27,20 +27,14 @@ class MainPageTest extends TestCase
      * @return void
      */
     public function testAjaxRequest()
-    {
-        /*$response = $this->get(
-            '/create',
-            [
-                'HTTP_X-Requested-With' => 'XMLHttpRequest'
-            ]
-        );*/
+    {        
 
         $response = $this->withHeaders([
             'HTTP_X-Requested-With' => 'XMLHttpRequest'
         ])->get('/create');
 
         //Get responce
-        //$response->assertSuccessful();        
+        $response->assertSuccessful();        
         //Check structure        
         $response->assertJsonStructure([
             'divisions' => [ 
