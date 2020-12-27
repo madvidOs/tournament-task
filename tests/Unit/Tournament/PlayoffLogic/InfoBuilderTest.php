@@ -2,7 +2,8 @@
 
 namespace Tests\Unit\Tournament\PlayoffLogic;
 
-use App\Src\Tournament\Services\DivisionsLogic\InfoBuilder as DivisionsInfoBuilder;
+use App\Src\Tournament\Services\DivisionsLogic\InfoAggregator as DivisionsInfoAggregator;
+use App\Src\Tournament\Services\PlayoffLogic\InfoAggregator;
 use App\Src\Tournament\Services\PlayoffLogic\Instruments\DataDBPreparation;
 use App\Src\Tournament\Services\PlayoffLogic\Instruments\DataDBProxy;
 use App\Src\Tournament\Services\PlayoffLogic\Instruments\EntitiesGenerator;
@@ -11,20 +12,21 @@ use PHPUnit\Framework\TestCase;
 
 class InfoBuilderTest extends TestCase
 {
-    private $divisionsInfoBuilderMock;
+    private $divisionsInfoAggregatorMock;
     private $dataDBProxyMock;
     private $entitiesGeneratorMock;
-    private $dataDBPreparationStub;
+    private $dataDBPreparationMock;
+    private $infoAggregatorMock;
     
 
     protected function setUp(): void
     {        
-        $this->divisionsInfoBuilderMock = $this->getMockBuilder(DivisionsInfoBuilder::class)
+        $this->divisionsInfoAggregatorMock = $this->getMockBuilder(DivisionsInfoAggregator::class)
             ->disableOriginalConstructor()
             ->onlyMethods([
-                'getPositions',
-                'getAllTeams',                
-                'getDivisions',                
+                'getPositionsInDivisions',     
+                'getAllTeams',
+                'getDivisions'
             ])->getMock();
 
         $this->dataDBProxyMock = $this->getMockBuilder(DataDBProxy::class)
@@ -48,7 +50,7 @@ class InfoBuilderTest extends TestCase
                 'createGamesResults', 
             ])->getMock();  
             
-        $this->dataDBPreparationStub = $this->getMockBuilder(DataDBPreparation::class)
+        $this->dataDBPreparationMock = $this->getMockBuilder(DataDBPreparation::class)
             ->disableOriginalConstructor()
             ->onlyMethods([
                 'getBracketDataForInsert',
@@ -57,15 +59,33 @@ class InfoBuilderTest extends TestCase
                 'getWinnersDataForInsert',                
             ])->getMock();
 
-        
+
+        $this->infoAggregatorMock = $this->getMockBuilder(InfoAggregator::class)            
+            ->onlyMethods([
+                'setParticipants',
+                'getParticipants',
+                'setBracket',
+                'getBracket',
+                'setGames',
+                'getGames',
+                'getWinnersGames',
+                'setWinners',
+                'getWinners',
+                'setTeamsNames'
+            ])->getMock();         
         
     }
 
     protected function tearDown():void
     {        
-        
+        unset(
+            $this->dataDBPreparationMock,
+            $this->dataDBProxyMock,
+            $this->divisionsInfoAggregatorMock,
+            $this->entitiesGeneratorMock,
+            $this->infoAggregatorMock
+        );
     }
-
 
     /**
      * Test setUpParticipants method
@@ -74,49 +94,46 @@ class InfoBuilderTest extends TestCase
      */
     public function testSetUpParticipants()
     {        
-        $this->divisionsInfoBuilderMock->expects($this->once())
-            ->method('getPositions')
+        $infoBuilder = new InfoBuilder(
+            $this->divisionsInfoAggregatorMock,
+            $this->dataDBProxyMock,
+            $this->entitiesGeneratorMock,
+            $this->dataDBPreparationMock,
+            $this->infoAggregatorMock
+        );
+
+        $this->divisionsInfoAggregatorMock->expects($this->once())
+            ->method('getPositionsInDivisions')
             ->willReturn([]);
             
         $this->entitiesGeneratorMock->expects($this->once())
             ->method('getParticipants')
-            ->willReturn([]);    
+            ->willReturn([]);      
+            
+        $this->infoAggregatorMock->expects($this->once())
+            ->method('setParticipants');            
         
-        $playInfo = new InfoBuilder(
-            $this->divisionsInfoBuilderMock,
-            $this->dataDBProxyMock,
-            $this->entitiesGeneratorMock,
-            $this->dataDBPreparationStub
-        );
-        $playInfo->setUpParticipants();
+        $infoBuilder->setUpParticipants();
     }  
     
     /**
-     * Test setUpBracket method
-     * 
-     * @depends testSetUpParticipants
+     * Test setUpBracket method     
      *
      * @return void
      */
     public function testSetUpBracket()
-    {    
-        $this->divisionsInfoBuilderMock
-            ->method('getPositions')
-            ->willReturn([]); 
-            
-        $this->entitiesGeneratorMock
-            ->method('getParticipants')
-            ->willReturn([]);      
-        
-        $playInfo = new InfoBuilder(
-            $this->divisionsInfoBuilderMock,
+    {
+        $infoBuilder = new InfoBuilder(
+            $this->divisionsInfoAggregatorMock,
             $this->dataDBProxyMock,
             $this->entitiesGeneratorMock,
-            $this->dataDBPreparationStub
+            $this->dataDBPreparationMock,
+            $this->infoAggregatorMock
         );
-        $playInfo->setUpParticipants();
-
-        //start test
+        
+        $this->infoAggregatorMock->expects($this->once())
+            ->method('getParticipants')
+            ->willReturn([]);
 
         $this->entitiesGeneratorMock->expects($this->once())
             ->method('getLevel1Bracket')
@@ -134,7 +151,13 @@ class InfoBuilderTest extends TestCase
             ->method('createGamesResults')
             ->willReturn([]);
 
-        $playInfo->setUpBracket();
+        $this->infoAggregatorMock->expects($this->once())
+            ->method('setBracket');            
+
+        $this->infoAggregatorMock->expects($this->once())
+            ->method('setGames');              
+
+        $infoBuilder->setUpBracket();
     }
 
     /**
@@ -145,48 +168,27 @@ class InfoBuilderTest extends TestCase
      * @return void
      */
     public function testSetUpWinners()
-    {    
-        $this->divisionsInfoBuilderMock
-            ->method('getPositions')
-            ->willReturn([]); 
-            
-        $this->entitiesGeneratorMock
-            ->method('getParticipants')
-            ->willReturn([]);      
-        
-        $playInfo = new InfoBuilder(
-            $this->divisionsInfoBuilderMock,
+    { 
+        $infoBuilder = new InfoBuilder(
+            $this->divisionsInfoAggregatorMock,
             $this->dataDBProxyMock,
             $this->entitiesGeneratorMock,
-            $this->dataDBPreparationStub
-        );
-        $playInfo->setUpParticipants();        
+            $this->dataDBPreparationMock,
+            $this->infoAggregatorMock
+        );   
 
-        $this->entitiesGeneratorMock
-            ->method('getLevel1Bracket')
+        $this->infoAggregatorMock->expects($this->once())
+            ->method('getWinnersGames')
             ->willReturn([]);
-            
-        $this->entitiesGeneratorMock
-            ->method('getLevel2Bracket')
-            ->willReturn([]);
-            
-        $this->entitiesGeneratorMock
-            ->method('getLevel3Bracket')
-            ->willReturn([]);
-
-        $this->entitiesGeneratorMock
-            ->method('createGamesResults')
-            ->willReturn([]);
-
-        $playInfo->setUpBracket();
-
-        //start test
+        
         $this->entitiesGeneratorMock->expects($this->once())
             ->method('getWinners')
             ->willReturn([]);
 
-        $playInfo->setUpWinners();    
+        $this->infoAggregatorMock->expects($this->once())
+            ->method('setWinners');            
 
+        $infoBuilder->setUpWinners(); 
     }
 
     /**
@@ -195,26 +197,31 @@ class InfoBuilderTest extends TestCase
      * @return void
      */
     public function testSetUpTeamsNames()
-    {        
-        $this->divisionsInfoBuilderMock->expects($this->once())
+    {
+        $infoBuilder = new InfoBuilder(
+            $this->divisionsInfoAggregatorMock,
+            $this->dataDBProxyMock,
+            $this->entitiesGeneratorMock,
+            $this->dataDBPreparationMock,
+            $this->infoAggregatorMock
+        );
+
+        $this->divisionsInfoAggregatorMock->expects($this->once())
             ->method('getAllTeams')
             ->willReturn([]);
 
-        $this->divisionsInfoBuilderMock->expects($this->once())
+        $this->divisionsInfoAggregatorMock->expects($this->once())
             ->method('getDivisions')
             ->willReturn([]);    
             
         $this->entitiesGeneratorMock->expects($this->once())
             ->method('getTeamsNames')
-            ->willReturn([]);    
+            ->willReturn([]);            
         
-        $playInfo = new InfoBuilder(
-            $this->divisionsInfoBuilderMock,
-            $this->dataDBProxyMock,
-            $this->entitiesGeneratorMock,
-            $this->dataDBPreparationStub
-        );
-        $playInfo->setUpTeamsNames();
+        $this->infoAggregatorMock->expects($this->once())
+            ->method('setTeamsNames');
+
+        $infoBuilder->setUpTeamsNames();
     }  
 
     /**
@@ -226,142 +233,59 @@ class InfoBuilderTest extends TestCase
      */
     public function testWriteDataToDB()
     {    
-        $this->divisionsInfoBuilderMock
-            ->method('getPositions')
-            ->willReturn([]); 
-            
-        $this->entitiesGeneratorMock
-            ->method('getParticipants')
-            ->willReturn([]);      
-        
-        $playInfo = new InfoBuilder(
-            $this->divisionsInfoBuilderMock,
+        $infoBuilder = new InfoBuilder(
+            $this->divisionsInfoAggregatorMock,
             $this->dataDBProxyMock,
             $this->entitiesGeneratorMock,
-            $this->dataDBPreparationStub
-        );
-        $playInfo->setUpParticipants();        
+            $this->dataDBPreparationMock,
+            $this->infoAggregatorMock
+        );   
 
-        $this->entitiesGeneratorMock
-            ->method('getLevel1Bracket')
+        $this->infoAggregatorMock->expects($this->once())
+            ->method('getParticipants')
             ->willReturn([]);
-            
-        $this->entitiesGeneratorMock
-            ->method('getLevel2Bracket')
-            ->willReturn([]);
-            
-        $this->entitiesGeneratorMock
-            ->method('getLevel3Bracket')
-            ->willReturn([]);
-
-        $this->entitiesGeneratorMock
-            ->method('createGamesResults')
-            ->willReturn([]);
-
-        $playInfo->setUpBracket();
         
-        $this->entitiesGeneratorMock
-            ->method('getWinners')
+        $this->dataDBPreparationMock->expects($this->once())
+            ->method('getParticipantsDataForInsert')
             ->willReturn([]);
 
-        $playInfo->setUpWinners();    
-
-        //start test
         $this->dataDBProxyMock->expects($this->once())
             ->method('insertParticipants');
+
+        $this->infoAggregatorMock->expects($this->once())
+            ->method('getBracket')
+            ->willReturn([]);
+            
+        $this->dataDBPreparationMock->expects($this->once())
+            ->method('getBracketDataForInsert')
+            ->willReturn([]); 
         
         $this->dataDBProxyMock->expects($this->once())
-            ->method('insertBracket');    
+            ->method('insertBracket');  
+            
+        $this->infoAggregatorMock->expects($this->once())
+            ->method('getGames')
+            ->willReturn([]);   
+            
+        $this->dataDBPreparationMock->expects($this->once())
+            ->method('getGamesDataForInsert')
+            ->willReturn([]);
 
         $this->dataDBProxyMock->expects($this->once())
             ->method('insertGames');   
-            
-        $this->dataDBProxyMock->expects($this->once())
-            ->method('insertWinners');  
-                    
-        $this->dataDBPreparationStub->expects($this->once())
-            ->method('getParticipantsDataForInsert')
-            ->willReturn([]);
-            
-        $this->dataDBPreparationStub->expects($this->once())
-            ->method('getBracketDataForInsert')
-            ->willReturn([]);    
 
-        $this->dataDBPreparationStub->expects($this->once())
-            ->method('getGamesDataForInsert')
-            ->willReturn([]);        
-
-        $this->dataDBPreparationStub->expects($this->once())
-            ->method('getWinnersDataForInsert')
-            ->willReturn([]);            
-            
-        $playInfo->writeDataToDB();      
-
-    }
-
-    /**
-     * Test getResponse method
-     * 
-     * @depends testSetUpWinners
-     *
-     * @return void
-     */
-    public function testGetResponse()
-    {    
-        $this->divisionsInfoBuilderMock
-            ->method('getPositions')
-            ->willReturn([]); 
-            
-        $this->entitiesGeneratorMock
-            ->method('getParticipants')
-            ->willReturn([]);      
-        
-        $playInfo = new InfoBuilder(
-            $this->divisionsInfoBuilderMock,
-            $this->dataDBProxyMock,
-            $this->entitiesGeneratorMock,
-            $this->dataDBPreparationStub
-        );
-        $playInfo->setUpParticipants();        
-
-        $this->entitiesGeneratorMock
-            ->method('getLevel1Bracket')
-            ->willReturn([]);
-            
-        $this->entitiesGeneratorMock
-            ->method('getLevel2Bracket')
-            ->willReturn([]);
-            
-        $this->entitiesGeneratorMock
-            ->method('getLevel3Bracket')
-            ->willReturn([]);
-
-        $this->entitiesGeneratorMock
-            ->method('createGamesResults')
-            ->willReturn([]);
-
-        $playInfo->setUpBracket();
-        
-        $this->entitiesGeneratorMock
+        $this->infoAggregatorMock->expects($this->once())
             ->method('getWinners')
             ->willReturn([]);
 
-        $playInfo->setUpWinners();    
+        $this->dataDBPreparationMock->expects($this->once())
+            ->method('getWinnersDataForInsert')
+            ->willReturn([]);
+            
+        $this->dataDBProxyMock->expects($this->once())
+            ->method('insertWinners');                                    
+            
+        $infoBuilder->writeDataToDB();      
 
-        //start test
-        $response = $playInfo->getResponse([
-            'bracket', 
-            'games', 
-            'winners', 
-            'teamNames'
-        ]);        
-
-        $this->assertArrayHasKey('playoff', $response);
-        $this->assertArrayHasKey('bracket', $response['playoff']);
-        $this->assertArrayHasKey('games', $response['playoff']);
-        $this->assertArrayHasKey('winners', $response['playoff']);
-        $this->assertArrayHasKey('teamNames', $response['playoff']);
-
-    }
-    
+    }    
 }

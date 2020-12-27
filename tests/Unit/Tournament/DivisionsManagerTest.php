@@ -2,14 +2,15 @@
 
 namespace Tests\Unit\Tournament;
 
+use App\Src\Tournament\Services\DivisionsLogic\InfoAggregator;
 use App\Src\Tournament\Services\DivisionsLogic\InfoBuilder;
 use App\Src\Tournament\Services\DivisionsManager;
 use PHPUnit\Framework\TestCase;
 
 class DivisionsManagerTest extends TestCase
 {
-
     protected $infoBuilderMock;
+    protected $infoAggregatorMock;
 
     protected function setUp(): void
     {        
@@ -22,8 +23,14 @@ class DivisionsManagerTest extends TestCase
                 'setUpScore',
                 'setUpPositions',
                 'writeDataToDB',
-                'getResponse',
+                'getInfoAggregator',
             ])->getMock();
+
+        $this->infoAggregatorMock = $this->getMockBuilder(InfoAggregator::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([
+                'toArray',                
+            ])->getMock();        
     }
 
     protected function tearDown():void
@@ -38,16 +45,23 @@ class DivisionsManagerTest extends TestCase
      * @return void
      */
     public function testGetDivisionsWithParticipants()
-    {        
-        $this->infoBuilderMock->expects($this->once())
+    { 
+        $infoBuilderMock = $this->infoBuilderMock;
+        $infoAggregatorMock = $this->infoAggregatorMock;
+
+        $infoBuilderMock->expects($this->once())
             ->method('setUpDivisions');
         
-        $this->infoBuilderMock->expects($this->once())
+        $infoBuilderMock->expects($this->once())
             ->method('setUpTeams');        
 
-        $this->infoBuilderMock->expects($this->once())
-            ->method('getResponse')
-            ->with($this->equalTo(['teams']));
+        $infoBuilderMock->expects($this->once())
+            ->method('getInfoAggregator')
+            ->willReturn($infoAggregatorMock);  
+
+        $infoAggregatorMock->expects($this->once())
+            ->method('toArray')
+            ->with($this->equalTo(['teams']));    
         
         $divisionsManager = new DivisionsManager($this->infoBuilderMock);
         $divisionsManager->getDivisionsWithParticipants();    
@@ -61,27 +75,34 @@ class DivisionsManagerTest extends TestCase
      */
     public function testGetGamesResults()
     {
-        $this->infoBuilderMock->expects($this->once())
+        $infoBuilderMock = $this->infoBuilderMock;
+        $infoAggregatorMock = $this->infoAggregatorMock;
+
+        $infoBuilderMock->expects($this->once())
             ->method('setUpDivisions');
         
-        $this->infoBuilderMock->expects($this->once())
+        $infoBuilderMock->expects($this->once())
             ->method('setUpTeams');    
 
-        $this->infoBuilderMock->expects($this->once())
+        $infoBuilderMock->expects($this->once())
             ->method('setUpGames');    
         
-        $this->infoBuilderMock->expects($this->once())
+        $infoBuilderMock->expects($this->once())
             ->method('setUpScore');
         
-        $this->infoBuilderMock->expects($this->once())
+        $infoBuilderMock->expects($this->once())
             ->method('setUpPositions');    
 
-        $this->infoBuilderMock->expects($this->once())
+        $infoBuilderMock->expects($this->once())
             ->method('writeDataToDB');    
         
-        $this->infoBuilderMock->expects($this->once())
-            ->method('getResponse')
-            ->with($this->equalTo(['teams', 'games', 'score', 'positions']));
+        $infoBuilderMock->expects($this->once())
+            ->method('getInfoAggregator')
+            ->willReturn($infoAggregatorMock); 
+
+        $infoAggregatorMock->expects($this->once())
+            ->method('toArray')
+            ->with($this->equalTo(['teams', 'games', 'score', 'positions']));    
         
         $divisionsManager = new DivisionsManager($this->infoBuilderMock);
         $divisionsManager->getGamesResults();    

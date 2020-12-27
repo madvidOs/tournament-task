@@ -11,23 +11,19 @@ class InfoBuilder {
     private DataDBProxy $dataDBProxy;
     private EntitiesGenerator $entitiesGenerator;
     private DataDBPreparation $dataDBPreparation;
-
-    private $divisions;
-    private $allTeams;
-
-    private $teamsByDivision;
-    private $gamesByDivision;
-    private $scoreByDivision;
-    private $positionsByDivision;    
+    private InfoAggregator $infoAggregator;    
+    
 
     public function __construct(
         DataDBProxy $dataDBProxy,
         EntitiesGenerator $entitiesGenerator,
-        DataDBPreparation $dataDBPreparation
+        DataDBPreparation $dataDBPreparation,
+        InfoAggregator $infoAggregator
     ) {
         $this->dataDBProxy = $dataDBProxy;
         $this->entitiesGenerator = $entitiesGenerator;
         $this->dataDBPreparation = $dataDBPreparation;
+        $this->infoAggregator = $infoAggregator;
     }
 
     /**
@@ -36,16 +32,7 @@ class InfoBuilder {
      */
     public function setUpDivisions() {
         $divisions = $this->dataDBProxy->getDivisions();        
-        $result = [];
-        
-        foreach($divisions as $d) {
-            $result[$d->id] = [
-                'divisionId' => $d->id,
-                'divisionName' => $d->name,
-            ];            
-        }
-
-        $this->divisions = $result;        
+        $this->infoAggregator->setDivisions($divisions->all());       
     }
 
     /**
@@ -53,43 +40,21 @@ class InfoBuilder {
      *     
      */
     public function setUpTeams() {
-        
-        $result = [];
-        $teams_ = [];
-        $teams = $this->dataDBProxy->getTeams();
 
-        //var_dump($this->dataDBProxy);
-        
-        foreach ($teams as $team) {            
-            if (!empty($this->divisions[$team->id_division])) { 
-                $result[$team->id_division][$team->id] = [
-                    'teamId' => $team->id,
-                    'divisionId' => $team->id_division,
-                    'teamName' => $team->name,
-                ];
-                $teams_[$team->id] = [
-                    'teamId' => $team->id,
-                    'divisionId' => $team->id_division,
-                    'teamName' => $team->name,
-                ];
-            }
-        }        
-        
-        $this->allTeams = $teams_;
-        $this->teamsByDivision = $result;
+        $teams = $this->dataDBProxy->getTeams();
+        $this->infoAggregator->setTeams($teams->all());        
     }
 
     /**
      * Set Up games 
      *     
      */
-    public function setUpGames() {        
-        foreach ($this->divisions as $division) {
-            $divisionId = $division['divisionId'];            
-            $this->gamesByDivision[$divisionId] = 
-            $this->entitiesGenerator->createGamesResults(
-                    $this->teamsByDivision[$divisionId]
-            );            
+    public function setUpGames() {
+        foreach ($this->infoAggregator->getDivisions() as $division) {
+            $divisionId = $division['divisionId'];   
+            $teams = $this->infoAggregator->getTeamsByDivisionId($divisionId); 
+            $games = $this->entitiesGenerator->createGamesResults($teams);            
+            $this->infoAggregator->setGamesByDivisionId($divisionId, $games);            
         }
     }
 
@@ -98,12 +63,11 @@ class InfoBuilder {
      *     
      */
     public function setUpScore() {        
-        foreach ($this->divisions as $division) {
+        foreach ($this->infoAggregator->getDivisions() as $division) {
             $divisionId = $division['divisionId'];
-            $this->scoreByDivision[$divisionId] = 
-            $this->entitiesGenerator->countScore(
-                    $this->gamesByDivision[$divisionId]
-            );
+            $games = $this->infoAggregator->getGamesByDivisionId($divisionId);
+            $score = $this->entitiesGenerator->countScore($games);           
+            $this->infoAggregator->setScoreByDivisionId($divisionId, $score);
         }        
     }
 
@@ -112,71 +76,13 @@ class InfoBuilder {
      *     
      */
     public function setUpPositions() {
-        foreach ($this->divisions as $division) {
+        foreach ($this->infoAggregator->getDivisions() as $division) {
             $divisionId = $division['divisionId'];
-            $this->positionsByDivision[$divisionId] =
-            $this->entitiesGenerator->countPositions(
-                    $this->scoreByDivision[$divisionId]
-            );
+            $score = $this->infoAggregator->getScoreByDivisionId($divisionId);
+            $positions = $this->entitiesGenerator->countPositions($score);
+            $this->infoAggregator->setPositionsByDivisionId($divisionId, $positions);            
         }
-    }
-
-    /**
-     * Get divisions
-     *
-     * return array     
-     */
-    public function getDivisions() {
-        return $this->divisions;
-    }
-
-    /**
-     * Get all teams
-     *     
-     * return array
-     */
-    public function getAllTeams() {
-        return $this->allTeams;
-    }
-
-    /**
-     * Get teams By division
-     *     
-     * return array
-     */
-    public function getTeamsByDivision() {
-        return $this->teamsByDivision;
-    }
-
-    /**
-     * Get games
-     *   
-     * return array
-     */
-    public function getGamesByDivision() {
-        return $this->gamesByDivision;
-    }
-
-
-    /**
-     * Get score
-     *   
-     * return array
-     */
-    public function getScore() {
-        return $this->scoreByDivision;
-    }
-
-
-    /**
-     * Get positions
-     *     
-     * return array
-     */
-    public function getPositions() {
-        return $this->positionsByDivision;
     }    
-    
 
     /**
      * write division data to DB
@@ -184,16 +90,17 @@ class InfoBuilder {
      */
     public function writeDataToDB() {
 
-        //games        
-        $insert = $this->dataDBPreparation->getGamesDataForInsert(
-            $this->gamesByDivision
-        );
+        //games 
+        $games = $this->infoAggregator->getGamesInDivisions();       
+        $insert = $this->dataDBPreparation->getGamesDataForInsert($games);
         $this->dataDBProxy->insertGames($insert);   
 
         //positions
+        $score = $this->infoAggregator->getScoreInDivisions();
+        $positions = $this->infoAggregator->getPositionsInDivisions();
         $insert = $this->dataDBPreparation->getPositionsDataForInsert(
-            $this->scoreByDivision, 
-            $this->positionsByDivision
+            $score, 
+            $positions
         );
         $this->dataDBProxy->insertPositions($insert);        
     }
@@ -201,36 +108,9 @@ class InfoBuilder {
     /**
      * Get response
      *
-     * @return array
+     * @return InfoAggregator
      */
-    public function getResponse(array $items) {
-        $result = [];
-
-        foreach ($this->divisions as $division) {
-            $divisionId = $division['divisionId'];
-            $result[$divisionId] = $division;
-
-            if (in_array('teams', $items)) {
-                $result[$divisionId]['teams'] = 
-                    $this->teamsByDivision[$divisionId];
-            }
-
-            if (in_array('games', $items)) {
-                $result[$divisionId]['games'] = 
-                    $this->gamesByDivision[$divisionId];
-            }
-
-            if (in_array('score', $items)) {                
-                $result[$divisionId]['score'] = 
-                    $this->scoreByDivision[$divisionId];
-            }
-
-            if (in_array('positions', $items)) {
-                $result[$divisionId]['positions'] = 
-                    $this->positionsByDivision[$divisionId];
-            }
-        }
-        
-        return ['divisions' => $result];
+    public function getInfoAggregator() {
+        return $this->infoAggregator;
     }
 }

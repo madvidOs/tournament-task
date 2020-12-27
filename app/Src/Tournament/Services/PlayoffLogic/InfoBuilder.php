@@ -2,34 +2,31 @@
 
 namespace App\Src\Tournament\Services\PlayoffLogic;
 
-use App\Src\Tournament\Services\DivisionsLogic\InfoBuilder as DivisionsInfoBuilder;
+use App\Src\Tournament\Services\DivisionsLogic\InfoAggregator as DivisionsInfoAggregator;
 use App\Src\Tournament\Services\PlayoffLogic\Instruments\DataDBPreparation;
 use App\Src\Tournament\Services\PlayoffLogic\Instruments\DataDBProxy;
 use App\Src\Tournament\Services\PlayoffLogic\Instruments\EntitiesGenerator;
+use App\Src\Tournament\Services\PlayoffLogic\InfoAggregator;
 
 class InfoBuilder {
-    private DivisionsInfoBuilder $divisionsInfoBuilder;
-    private DataDBProxy $playoffDataDBProxy;        
+    private DivisionsInfoAggregator $divisionsInfoAggregator;
+    private DataDBProxy $dataDBProxy;        
     private EntitiesGenerator $entitiesGenerator;
     private DataDBPreparation $dataDBPreparation;
-
-    private $participants;    
-    private $bracket;
-    private $games;
-    private $winners;
-    private $teamsNames;
-
+    private InfoAggregator $infoAggregator;    
 
     public function __construct(
-        DivisionsInfoBuilder $divisionsInfoBuilder,
-        DataDBProxy $playoffDataDBProxy,
+        DivisionsInfoAggregator $divisionsInfoAggregator,
+        DataDBProxy $dataDBProxy,
         EntitiesGenerator $entitiesGenerator,
-        DataDBPreparation $dataDBPreparation
+        DataDBPreparation $dataDBPreparation,
+        InfoAggregator $infoAggregator
     ) {
-        $this->divisionsInfoBuilder = $divisionsInfoBuilder;
-        $this->playoffDataDBProxy = $playoffDataDBProxy;
+        $this->divisionsInfoAggregator = $divisionsInfoAggregator;
+        $this->dataDBProxy = $dataDBProxy;
         $this->entitiesGenerator = $entitiesGenerator;        
         $this->dataDBPreparation = $dataDBPreparation;
+        $this->infoAggregator = $infoAggregator;
     }
 
     /**
@@ -37,9 +34,11 @@ class InfoBuilder {
      *     
      */
     public function setUpParticipants() {
-        $divisionPositions = $this->divisionsInfoBuilder->getPositions();        
-        $this->participants = $this->entitiesGenerator
-            ->getParticipants($divisionPositions);        
+        $divisionPositions = 
+            $this->divisionsInfoAggregator->getPositionsInDivisions();        
+        $participants = 
+            $this->entitiesGenerator->getParticipants($divisionPositions);
+        $this->infoAggregator->setParticipants($participants);
     }
 
     /**
@@ -52,8 +51,9 @@ class InfoBuilder {
         $games   = [];        
 
         //level 1 generation data
+        $participants = $this->infoAggregator->getParticipants();
         $bracket[1] = $this->entitiesGenerator->getLevel1Bracket(
-            $this->participants
+            $participants
         );        
         $games[1] = $this->entitiesGenerator->createGamesResults(
             $bracket[1]
@@ -73,10 +73,10 @@ class InfoBuilder {
         );
         $games[3] = $this->entitiesGenerator->createGamesResults(
             $bracket[3]
-        );        
-
-        $this->bracket = $bracket;
-        $this->games   = $games;
+        ); 
+        
+        $this->infoAggregator->setBracket($bracket);
+        $this->infoAggregator->setGames($games);
     }
 
     /**
@@ -84,9 +84,12 @@ class InfoBuilder {
      *
      */
     public function setUpWinners() {
-        $this->winners = $this->entitiesGenerator->getWinners(
-            $this->games[3]
-        );        
+        $games = $this->infoAggregator->getWinnersGames();
+        $winners = $this->entitiesGenerator->getWinners(
+            $games
+        );
+        $this->infoAggregator->setWinners($winners);
+
     }
 
     /**
@@ -95,14 +98,14 @@ class InfoBuilder {
      */
     public function setUpTeamsNames() {        
 
-        $teams = $this->divisionsInfoBuilder->getAllTeams();  
-        $divisions = $this->divisionsInfoBuilder->getDivisions(); 
+        $teams = $this->divisionsInfoAggregator->getAllTeams();  
+        $divisions = $this->divisionsInfoAggregator->getDivisions(); 
         $teamsNames = $this->entitiesGenerator->getTeamsNames(
             $divisions, 
             $teams
         );
-        
-        $this->teamsNames = $teamsNames;
+
+        $this->infoAggregator->setTeamsNames($teamsNames);        
     }
     
     
@@ -113,55 +116,40 @@ class InfoBuilder {
      */
     public function writeDataToDB() {
         //participants        
+        $participants = $this->infoAggregator->getParticipants();
         $insert = $this->dataDBPreparation->getParticipantsDataForInsert(
-            $this->participants
+            $participants
         );
-        $this->playoffDataDBProxy->insertParticipants($insert);        
+        $this->dataDBProxy->insertParticipants($insert);        
         
         //bracket
+        $bracket = $this->infoAggregator->getBracket();
         $insert = $this->dataDBPreparation->getBracketDataForInsert(
-            $this->bracket
+            $bracket
         );
-        $this->playoffDataDBProxy->insertBracket($insert);
+        $this->dataDBProxy->insertBracket($insert);
 
         //games        
+        $games = $this->infoAggregator->getGames();
         $insert = $this->dataDBPreparation->getGamesDataForInsert(
-            $this->games
+            $games
         );
-        $this->playoffDataDBProxy->insertGames($insert);
+        $this->dataDBProxy->insertGames($insert);
 
         //winners
+        $winners = $this->infoAggregator->getWinners();
         $insert = $this->dataDBPreparation->getWinnersDataForInsert(
-            $this->winners
+            $winners
         );
-        $this->playoffDataDBProxy->insertWinners($insert);
+        $this->dataDBProxy->insertWinners($insert);
     }
 
     /**
-     * Get response
+     * Get result
      *
-     * @return array
+     * @return InfoAggregator
      */
-    public function getResponse(array $items) {
-        
-        $result = [];
-
-        if (in_array('bracket', $items)) {
-            $result['bracket'] = $this->bracket;
-        }
-
-        if (in_array('games', $items)) {
-            $result['games'] = $this->games;
-        }
-
-        if (in_array('winners', $items)) {
-            $result['winners'] = $this->winners;
-        }        
-
-        if (in_array('teamNames', $items)) {
-            $result['teamNames'] = $this->teamsNames;
-        }        
-
-        return ['playoff' => $result];
+    public function getInfoAggregator() {        
+        return $this->infoAggregator;
     }
 }

@@ -29,6 +29,13 @@ class PlayoffManager {
 
         $this->infoBuilder->writeDataToDB();
 
-        return $this->infoBuilder->getResponse(['bracket', 'games', 'winners', 'teamNames']);
+        $infoAggregator = $this->infoBuilder->getInfoAggregator();
+
+        return $infoAggregator->toArray([
+            'bracket', 
+            'games', 
+            'winners', 
+            'teamNames'
+        ]);
     }
 }

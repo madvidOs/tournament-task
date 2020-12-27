@@ -35,9 +35,9 @@ class TournamentController extends Controller
         PlayoffManager $playoffManager
     ) {       
         //check request if ajax and json
-        if (!$request->ajax() && !$request->expectsJson()) {
+        /*if (!$request->ajax() && !$request->expectsJson()) {
             abort(403);
-        }
+        }*/
 
         $divisionsResults = $divisionsManager->getGamesResults();        
         $playoffResults = $playoffManager->getGamesResults();

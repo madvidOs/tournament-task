@@ -2,7 +2,8 @@
 
 namespace App\Src\Tournament\Providers\Services\PlayoffLogic;
 
-use App\Src\Tournament\Services\DivisionsLogic\InfoBuilder as DivisionsInfoBuilder;
+use App\Src\Tournament\Services\DivisionsLogic\InfoAggregator as DivisionsInfoAggregator;
+use App\Src\Tournament\Services\PlayoffLogic\InfoAggregator;
 use App\Src\Tournament\Services\PlayoffLogic\Instruments\DataDBPreparation;
 use App\Src\Tournament\Services\PlayoffLogic\Instruments\DataDBProxy;
 use App\Src\Tournament\Services\PlayoffLogic\Instruments\EntitiesGenerator;
@@ -20,10 +21,11 @@ class InfoBuilderProvider extends ServiceProvider
     {
         $this->app->singleton(Model::class, function ($app) {
             return new Model(
-                $app->make(DivisionsInfoBuilder::class),
+                $app->make(DivisionsInfoAggregator::class),
                 $app->make(DataDBProxy::class),
                 $app->make(EntitiesGenerator::class),
                 $app->make(DataDBPreparation::class),
+                $app->make(InfoAggregator::class),
             );    
         });
     }

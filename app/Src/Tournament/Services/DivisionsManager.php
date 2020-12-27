@@ -5,13 +5,10 @@ namespace App\Src\Tournament\Services;
 use App\Src\Tournament\Services\DivisionsLogic\InfoBuilder;
 
 class DivisionsManager {
-    
-    private InfoBuilder $divisionsInfo;
+    private InfoBuilder $infoBuilder;
 
-    public function __construct(        
-        InfoBuilder $divisionsInfo           
-    ) {        
-        $this->divisionsInfo = $divisionsInfo;
+    public function __construct(InfoBuilder $infoBuilder) {        
+        $this->infoBuilder = $infoBuilder;
     }
     
     
@@ -22,10 +19,12 @@ class DivisionsManager {
      */
     public function getDivisionsWithParticipants() {
 
-        $this->divisionsInfo->setUpDivisions();
-        $this->divisionsInfo->setUpTeams();        
+        $this->infoBuilder->setUpDivisions();
+        $this->infoBuilder->setUpTeams();  
+        
+        $infoAggregator = $this->infoBuilder->getInfoAggregator();
 
-        return $this->divisionsInfo->getResponse(['teams']);
+        return $infoAggregator->toArray(['teams']);
     }
 
     /**
@@ -33,16 +32,23 @@ class DivisionsManager {
      *
      * @return array
      */
-    public function getGamesResults() {    
+    public function getGamesResults() {
         
-        $this->divisionsInfo->setUpDivisions();
-        $this->divisionsInfo->setUpTeams();
-        $this->divisionsInfo->setUpGames();
-        $this->divisionsInfo->setUpScore();
-        $this->divisionsInfo->setUpPositions();        
+        $this->infoBuilder->setUpDivisions();
+        $this->infoBuilder->setUpTeams();
+        $this->infoBuilder->setUpGames();
+        $this->infoBuilder->setUpScore();
+        $this->infoBuilder->setUpPositions();        
 
-        $this->divisionsInfo->writeDataToDB();
+        $this->infoBuilder->writeDataToDB();
 
-        return $this->divisionsInfo->getResponse(['teams', 'games', 'score', 'positions']);
+        $infoAggregator = $this->infoBuilder->getInfoAggregator();
+
+        return $infoAggregator->toArray([
+            'teams', 
+            'games', 
+            'score', 
+            'positions'
+        ]);
     }
 }

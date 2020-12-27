@@ -2,6 +2,7 @@
 
 namespace Tests\Unit\Tournament;
 
+use App\Src\Tournament\Services\PlayoffLogic\InfoAggregator;
 use App\Src\Tournament\Services\PlayoffLogic\InfoBuilder;
 use App\Src\Tournament\Services\PlayoffManager;
 use PHPUnit\Framework\TestCase;
@@ -9,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 class PlayoffManagerTest extends TestCase
 {
     protected $infoBuilderMock;
+    protected $infoAggregatorMock;
 
     protected function setUp(): void
     {        
@@ -20,8 +22,14 @@ class PlayoffManagerTest extends TestCase
                 'setUpWinners',
                 'setUpTeamsNames',                
                 'writeDataToDB',
-                'getResponse',
+                'getInfoAggregator',
             ])->getMock();
+
+        $this->infoAggregatorMock = $this->getMockBuilder(InfoAggregator::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([
+                'toArray',                
+            ])->getMock();    
     }
 
     protected function tearDown():void
@@ -38,6 +46,8 @@ class PlayoffManagerTest extends TestCase
     public function testGetGamesResults()
     {
         $infoBuilderMock = $this->infoBuilderMock;
+        $infoAggregatorMock = $this->infoAggregatorMock;
+        
         $infoBuilderMock->expects($this->once())
             ->method('setUpParticipants');
         
@@ -52,9 +62,13 @@ class PlayoffManagerTest extends TestCase
         
         $infoBuilderMock->expects($this->once())
             ->method('writeDataToDB');    
-        
+
         $infoBuilderMock->expects($this->once())
-            ->method('getResponse')
+            ->method('getInfoAggregator')
+            ->willReturn($infoAggregatorMock);    
+        
+        $infoAggregatorMock->expects($this->once())
+            ->method('toArray')
             ->with($this->equalTo(['bracket', 'games', 'winners', 'teamNames']));
         
         $playoffManager = new PlayoffManager($infoBuilderMock);

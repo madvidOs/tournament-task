@@ -189,6 +189,7 @@ return [
         
         App\Src\Tournament\Providers\Services\DivisionsManagerProvider::class,
         App\Src\Tournament\Providers\Services\DivisionsLogic\InfoBuilderProvider::class,
+        App\Src\Tournament\Providers\Services\DivisionsLogic\InfoAggregatorProvider::class,
         //App\Src\Tournament\Providers\Services\DivisionsLogic\Instruments\DivisionsDataDBProxyProvider::class,
         //App\Src\Tournament\Providers\Services\DivisionsLogic\Instruments\DivisionsDataDBPreparationProvider::class,
 
