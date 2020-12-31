@@ -64,7 +64,6 @@ class InfoAggregator {
      *     
      */
     public function setGamesByDivisionId($divisionId, $games) {        
-        //dd($games);
         $this->gamesByDivision[$divisionId] = $games;        
     }
 

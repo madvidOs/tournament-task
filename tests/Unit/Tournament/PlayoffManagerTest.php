@@ -69,7 +69,7 @@ class PlayoffManagerTest extends TestCase
         
         $infoAggregatorMock->expects($this->once())
             ->method('toArray')
-            ->with($this->equalTo(['bracket', 'games', 'winners', 'teamNames']));
+            ->with($this->equalTo(['bracket', 'games', 'winners', 'teamsNames']));
         
         $playoffManager = new PlayoffManager($infoBuilderMock);
         $playoffManager->getGamesResults();

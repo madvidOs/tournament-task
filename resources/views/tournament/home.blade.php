@@ -129,7 +129,7 @@
                         var id_str= '#playoff_result_' + key;
                         //console.log(data['playoff']['winners'][key]);
                         var idTeam = data['playoff']['winners'][key]['idTeam'];
-                        var teamName = data['playoff']['teamNames'][idTeam]['teamName'];
+                        var teamName = data['playoff']['teamsNames'][idTeam]['teamName'];
                         var content_str =  key + '. ' + teamName;
 
                         $(id_str).html(content_str);
@@ -155,7 +155,7 @@
                             var id_str= '#playoff_team_' + key + '_' + i;
 
                             var idTeam = data['playoff']['bracket'][key][key2]['idTeam'];
-                            var teamName = data['playoff']['teamNames'][idTeam]['teamName'];
+                            var teamName = data['playoff']['teamsNames'][idTeam]['teamName'];
                             var content_str = teamName;
                             $(id_str).html(content_str);
                         }                        

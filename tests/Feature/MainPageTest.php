@@ -50,7 +50,7 @@ class MainPageTest extends TestCase
             'playoff' => [
                 'bracket',
                 'games',
-                'teamNames',
+                'teamsNames',
                 'winners'
             ]            
         ]);

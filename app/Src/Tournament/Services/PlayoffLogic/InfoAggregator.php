@@ -100,7 +100,7 @@ class InfoAggregator {
      *     
      */
     public function getTeamsNames() {        
-        return $this->games;    
+        return $this->teamsNames;    
     }
     
 
@@ -125,8 +125,8 @@ class InfoAggregator {
             $result['winners'] = $this->winners;
         }        
 
-        if (in_array('teamNames', $items)) {
-            $result['teamNames'] = $this->teamsNames;
+        if (in_array('teamsNames', $items)) {
+            $result['teamsNames'] = $this->teamsNames;
         }        
 
         return ['playoff' => $result];

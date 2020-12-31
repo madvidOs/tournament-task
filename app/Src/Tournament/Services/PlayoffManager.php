@@ -35,7 +35,7 @@ class PlayoffManager {
             'bracket', 
             'games', 
             'winners', 
-            'teamNames'
+            'teamsNames'
         ]);
     }
 }
