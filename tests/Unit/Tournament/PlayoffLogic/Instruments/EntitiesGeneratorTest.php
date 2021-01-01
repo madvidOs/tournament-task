@@ -4,9 +4,12 @@ namespace Tests\Unit\Tournament\PlayoffLogic\Instruments;
 
 use App\Src\Tournament\Services\PlayoffLogic\Instruments\EntitiesGenerator;
 use PHPUnit\Framework\TestCase;
+use Tests\Unit\UtilsTrait;
 
 class EntitiesGeneratorTest extends TestCase
 {
+    use UtilsTrait;
+
     /**
      * Test getParticipants method
      * 
@@ -131,7 +134,7 @@ class EntitiesGeneratorTest extends TestCase
     public function testGenerateGame()
     {
         $generator = new EntitiesGenerator;
-        $game = self::callMethod(
+        $game = self::callPrivateMethod(
             $generator,
             '_generateGame',
             [1, 2, 1]
@@ -591,13 +594,5 @@ class EntitiesGeneratorTest extends TestCase
             ],
 
         ];
-    }
-
-    public static function callMethod($obj, $name, array $args)
-    {
-        $class = new \ReflectionClass($obj);
-        $method = $class->getMethod($name);
-        $method->setAccessible(true);
-        return $method->invokeArgs($obj, $args);
-    }
+    }    
 }
