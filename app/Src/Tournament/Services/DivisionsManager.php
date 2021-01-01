@@ -4,10 +4,12 @@ namespace App\Src\Tournament\Services;
 
 use App\Src\Tournament\Services\DivisionsLogic\InfoBuilder;
 
-class DivisionsManager {
+class DivisionsManager 
+{
     private InfoBuilder $infoBuilder;
 
-    public function __construct(InfoBuilder $infoBuilder) {        
+    public function __construct(InfoBuilder $infoBuilder) 
+    {        
         $this->infoBuilder = $infoBuilder;
     }
     
@@ -17,7 +19,8 @@ class DivisionsManager {
      *
      * @return array
      */
-    public function getDivisionsWithParticipants() {
+    public function getDivisionsWithParticipants() 
+    {
 
         $this->infoBuilder->setUpDivisions();
         $this->infoBuilder->setUpTeams();  
@@ -32,7 +35,8 @@ class DivisionsManager {
      *
      * @return array
      */
-    public function getGamesResults() {
+    public function getGamesResults() 
+    {
         
         $this->infoBuilder->setUpDivisions();
         $this->infoBuilder->setUpTeams();
@@ -44,11 +48,13 @@ class DivisionsManager {
 
         $infoAggregator = $this->infoBuilder->getInfoAggregator();
 
-        return $infoAggregator->toArray([
-            'teams', 
-            'games', 
-            'score', 
-            'positions'
-        ]);
+        return $infoAggregator->toArray(
+            [
+                'teams', 
+                'games', 
+                'score', 
+                'positions'
+            ]
+        );
     }
 }

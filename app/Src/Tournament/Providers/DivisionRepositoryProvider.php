@@ -14,9 +14,12 @@ class DivisionRepositoryProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(DivisionRepository::class, function ($app) {
-            return new DivisionRepository();
-        });
+        $this->app->bind(
+            DivisionRepository::class, 
+            function ($app) {
+                return new DivisionRepository();
+            }
+        );
     }
 
     /**

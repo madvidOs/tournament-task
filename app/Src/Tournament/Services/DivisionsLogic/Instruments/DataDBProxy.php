@@ -7,18 +7,18 @@ use App\Src\Tournament\Repositories\DivisionPositionRepository;
 use App\Src\Tournament\Repositories\DivisionRepository;
 use App\Src\Tournament\Repositories\DivisionTeamRepository;
 
-class DataDBProxy {
-
+class DataDBProxy
+{
     private DivisionRepository $divisionRepository;
     private DivisionTeamRepository $divisionTeamRepository;
     private DivisionGameRepository $divisionGameRepository;
     private DivisionPositionRepository $divisionPositionRepository;
 
     public function __construct(
-            DivisionRepository $divisionRepository,
-            DivisionTeamRepository $divisionTeamRepository,
-            DivisionGameRepository $divisionGameRepository,
-            DivisionPositionRepository $divisionPositionRepository        
+        DivisionRepository $divisionRepository,
+        DivisionTeamRepository $divisionTeamRepository,
+        DivisionGameRepository $divisionGameRepository,
+        DivisionPositionRepository $divisionPositionRepository
     ) {
         $this->divisionRepository = $divisionRepository;
         $this->divisionTeamRepository = $divisionTeamRepository;
@@ -31,7 +31,8 @@ class DataDBProxy {
      *
      * @return Collection
      */
-    public function getDivisions() {        
+    public function getDivisions()
+    {
         return $this->divisionRepository->all();
     }
 
@@ -40,28 +41,32 @@ class DataDBProxy {
      *
      * @return Collection
      */
-    public function getTeams() {        
+    public function getTeams()
+    {
         return $this->divisionTeamRepository->all();
-    }   
+    }
 
     /**
      * Insert games
-     *     
+     *    
+     * @return void 
      */
-    public function insertGames(array $games) {
+    public function insertGames(array $games)
+    {
 
         $this->divisionGameRepository->truncate();
-        $this->divisionGameRepository->insert($games);        
+        $this->divisionGameRepository->insert($games);
     }
 
     /**
      * Insert positions
-     *     
+     * 
+     * @return void    
      */
-    public function insertPositions(array $positions) {
+    public function insertPositions(array $positions)
+    {
 
         $this->divisionPositionRepository->truncate();
-        $this->divisionPositionRepository->insert($positions);        
+        $this->divisionPositionRepository->insert($positions);
     }
-    
 }

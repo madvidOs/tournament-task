@@ -31,21 +31,25 @@ class InfoBuilder {
 
     /**
      * Set up participants
-     *     
+     * 
+     * @return void    
      */
-    public function setUpParticipants() {
-        $divisionPositions = 
-            $this->divisionsInfoAggregator->getPositionsInDivisions();        
-        $participants = 
-            $this->entitiesGenerator->getParticipants($divisionPositions);
+    public function setUpParticipants() 
+    {
+        $divisionPositions 
+            = $this->divisionsInfoAggregator->getPositionsInDivisions();        
+        $participants 
+            = $this->entitiesGenerator->getParticipants($divisionPositions);
         $this->infoAggregator->setParticipants($participants);
     }
 
     /**
      * Set up bracket
-     *     
+     * 
+     * @return void    
      */
-    public function setUpBracket() {
+    public function setUpBracket() 
+    {
         
         $bracket = [];
         $games   = [];        
@@ -80,10 +84,12 @@ class InfoBuilder {
     }
 
     /**
-     * set up winners
+     * Set up winners
      *
+     * @return void
      */
-    public function setUpWinners() {
+    public function setUpWinners() 
+    {
         $games = $this->infoAggregator->getWinnersGames();
         $winners = $this->entitiesGenerator->getWinners(
             $games
@@ -93,10 +99,12 @@ class InfoBuilder {
     }
 
     /**
-     * set up teams names
-     *     
+     * Set up teams names 
+     * 
+     * @return void   
      */
-    public function setUpTeamsNames() {        
+    public function setUpTeamsNames() 
+    {        
 
         $teams = $this->divisionsInfoAggregator->getAllTeams();  
         $divisions = $this->divisionsInfoAggregator->getDivisions(); 
@@ -111,10 +119,12 @@ class InfoBuilder {
     
 
     /**
-     * write data to DB
-     *     
+     * Write data to DB    
+     * 
+     * @return void
      */
-    public function writeDataToDB() {
+    public function writeDataToDB() 
+    {
         //participants        
         $participants = $this->infoAggregator->getParticipants();
         $insert = $this->dataDBPreparation->getParticipantsDataForInsert(
@@ -149,7 +159,8 @@ class InfoBuilder {
      *
      * @return InfoAggregator
      */
-    public function getInfoAggregator() {        
+    public function getInfoAggregator() 
+    {        
         return $this->infoAggregator;
     }
 }

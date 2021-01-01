@@ -27,34 +27,36 @@ class MainPageTest extends TestCase
      * @return void
      */
     public function testAjaxRequest()
-    {        
+    {
 
-        $response = $this->withHeaders([
-            'HTTP_X-Requested-With' => 'XMLHttpRequest'
-        ])->get('/create');
+        $response = $this->withHeaders(
+            [
+                'HTTP_X-Requested-With' => 'XMLHttpRequest'
+            ]
+        )->get('/create');
 
         //Get responce
-        $response->assertSuccessful();        
+        $response->assertSuccessful();
         //Check structure        
-        $response->assertJsonStructure([
-            'divisions' => [ 
-                '*' => [
-                    'divisionId',
-                    'divisionName',
-                    'games', 
-                    'positions', 
-                    'score',
-                    'teams'
+        $response->assertJsonStructure(
+            [
+                'divisions' => [
+                    '*' => [
+                        'divisionId',
+                        'divisionName',
+                        'games',
+                        'positions',
+                        'score',
+                        'teams'
+                    ],
                 ],
-            ],    
-            'playoff' => [
-                'bracket',
-                'games',
-                'teamsNames',
-                'winners'
-            ]            
-        ]);
-        
-        
+                'playoff' => [
+                    'bracket',
+                    'games',
+                    'teamsNames',
+                    'winners'
+                ]
+            ]
+        );
     }
 }

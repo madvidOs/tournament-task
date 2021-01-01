@@ -22,7 +22,7 @@ class PlayoffBracket extends Model
      * @var array
      */
     protected $fillable = [
-        'level', 
+        'level',
         'group_number',
         'id_team',
     ];

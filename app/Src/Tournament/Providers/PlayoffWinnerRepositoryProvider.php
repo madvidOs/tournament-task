@@ -3,7 +3,7 @@
 namespace App\Src\Tournament\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\Src\Tournament\Repositories\PlayoffWinnerRepository;
+use App\Src\Tournament\Repositories\PlayoffWinnerRepository as Model;
 
 class PlayoffWinnerRepositoryProvider extends ServiceProvider
 {
@@ -14,9 +14,12 @@ class PlayoffWinnerRepositoryProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(PlayoffWinnerRepository::class, function ($app) {
-            return new PlayoffWinnerRepository();
-        });
+        $this->app->bind(
+            Model::class, 
+            function ($app) {
+                return new Model();
+            }
+        );
     }
 
     /**

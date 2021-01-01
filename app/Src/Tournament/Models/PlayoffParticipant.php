@@ -29,8 +29,8 @@ class PlayoffParticipant extends Model
      * @var array
      */
     protected $fillable = [
-        'id_team', 
-        'id_division', 
+        'id_team',
+        'id_division',
         'position'
     ];
 }

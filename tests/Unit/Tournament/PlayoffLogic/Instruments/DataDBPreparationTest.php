@@ -7,18 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 class DataDBPreparationTest extends TestCase
 {
-
-    protected function setUp(): void
-    {        
-
-    }
-
-    protected function tearDown():void
-    {       
-        
-    }
-
-
     /**
      * Test getBracketDataForInsert method
      * 
@@ -80,6 +68,11 @@ class DataDBPreparationTest extends TestCase
     } 
 
 
+    /**
+     * Bracket data provider
+     * 
+     * @return array
+     */
     public function bracketDataProvider()
     {
         return [
@@ -149,6 +142,11 @@ class DataDBPreparationTest extends TestCase
         ];
     }
 
+    /**
+     * Participants data provider
+     * 
+     * @return array
+     */
     public function participantsDataProvider()
     {
         return [
@@ -191,6 +189,11 @@ class DataDBPreparationTest extends TestCase
         ];
     }
 
+    /**
+     * Games data provider
+     * 
+     * @return array
+     */
     public function gamesDataProvider()
     {
         return [
@@ -265,6 +268,11 @@ class DataDBPreparationTest extends TestCase
         ];
     }
 
+    /**
+     * Winners data provider
+     * 
+     * @return array
+     */
     public function winnersDataProvider()
     {
         return [

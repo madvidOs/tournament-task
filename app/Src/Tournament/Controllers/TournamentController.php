@@ -16,8 +16,8 @@ class TournamentController extends Controller
      */
     public function index(
         DivisionsManager $divisionsManager
-    ) {        
-        $divisionsWithTeams = $divisionsManager->getDivisionsWithParticipants();             
+    ) {
+        $divisionsWithTeams = $divisionsManager->getDivisionsWithParticipants();
         return view('tournament/home', compact('divisionsWithTeams'));
     }
 
@@ -30,22 +30,21 @@ class TournamentController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function create(
-        Request $request, 
-        DivisionsManager $divisionsManager, 
+        Request $request,
+        DivisionsManager $divisionsManager,
         PlayoffManager $playoffManager
-    ) {       
+    ) {
         //check request if ajax and json
-        /*if (!$request->ajax() && !$request->expectsJson()) {
+        if (!$request->ajax() && !$request->expectsJson()) {
             abort(403);
-        }*/
+        }
 
-        $divisionsResults = $divisionsManager->getGamesResults();        
+        $divisionsResults = $divisionsManager->getGamesResults();
         $playoffResults = $playoffManager->getGamesResults();
 
         //union of results
         $result = array_merge($divisionsResults, $playoffResults);
 
         return response()->json($result);
-    }   
-    
+    }
 }

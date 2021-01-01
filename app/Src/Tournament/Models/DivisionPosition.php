@@ -22,8 +22,8 @@ class DivisionPosition extends Model
      * @var array
      */
     protected $fillable = [
-        'id_division', 
-        'id_team', 
+        'id_division',
+        'id_team',
         'score',
         'position'
     ];

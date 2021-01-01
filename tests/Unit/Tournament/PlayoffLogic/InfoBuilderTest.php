@@ -17,67 +17,86 @@ class InfoBuilderTest extends TestCase
     private $entitiesGeneratorMock;
     private $dataDBPreparationMock;
     private $infoAggregatorMock;
-    
 
+
+    /**
+     * Set up mocks
+     *     
+     * @return void
+     */
     protected function setUp(): void
-    {        
+    {
         $this->divisionsInfoAggregatorMock = $this->getMockBuilder(DivisionsInfoAggregator::class)
             ->disableOriginalConstructor()
-            ->onlyMethods([
-                'getPositionsInDivisions',     
-                'getAllTeams',
-                'getDivisions'
-            ])->getMock();
+            ->onlyMethods(
+                [
+                    'getPositionsInDivisions',
+                    'getAllTeams',
+                    'getDivisions'
+                ]
+            )->getMock();
 
         $this->dataDBProxyMock = $this->getMockBuilder(DataDBProxy::class)
             ->disableOriginalConstructor()
-            ->onlyMethods([
-                'insertBracket',
-                'insertParticipants',                
-                'insertGames',                
-                'insertWinners',                
-            ])->getMock();
+            ->onlyMethods(
+                [
+                    'insertBracket',
+                    'insertParticipants',
+                    'insertGames',
+                    'insertWinners',
+                ]
+            )->getMock();
 
         $this->entitiesGeneratorMock = $this->getMockBuilder(EntitiesGenerator::class)
             ->disableOriginalConstructor()
-            ->onlyMethods([
-                'getParticipants',
-                'getLevel1Bracket',                
-                'getLevel2Bracket',                
-                'getLevel3Bracket',                
-                'getWinners', 
-                'getTeamsNames', 
-                'createGamesResults', 
-            ])->getMock();  
-            
+            ->onlyMethods(
+                [
+                    'getParticipants',
+                    'getLevel1Bracket',
+                    'getLevel2Bracket',
+                    'getLevel3Bracket',
+                    'getWinners',
+                    'getTeamsNames',
+                    'createGamesResults',
+                ]
+            )->getMock();
+
         $this->dataDBPreparationMock = $this->getMockBuilder(DataDBPreparation::class)
             ->disableOriginalConstructor()
-            ->onlyMethods([
-                'getBracketDataForInsert',
-                'getParticipantsDataForInsert',                
-                'getGamesDataForInsert',                
-                'getWinnersDataForInsert',                
-            ])->getMock();
+            ->onlyMethods(
+                [
+                    'getBracketDataForInsert',
+                    'getParticipantsDataForInsert',
+                    'getGamesDataForInsert',
+                    'getWinnersDataForInsert',
+                ]
+            )->getMock();
 
 
-        $this->infoAggregatorMock = $this->getMockBuilder(InfoAggregator::class)            
-            ->onlyMethods([
-                'setParticipants',
-                'getParticipants',
-                'setBracket',
-                'getBracket',
-                'setGames',
-                'getGames',
-                'getWinnersGames',
-                'setWinners',
-                'getWinners',
-                'setTeamsNames'
-            ])->getMock();         
-        
+        $this->infoAggregatorMock = $this->getMockBuilder(InfoAggregator::class)
+            ->onlyMethods(
+                [
+                    'setParticipants',
+                    'getParticipants',
+                    'setBracket',
+                    'getBracket',
+                    'setGames',
+                    'getGames',
+                    'getWinnersGames',
+                    'setWinners',
+                    'getWinners',
+                    'setTeamsNames'
+                ]
+            )->getMock();
     }
 
-    protected function tearDown():void
-    {        
+    /**
+     * Free mocks
+     *     
+     * @return void
+     */
+    protected function tearDown(): void
+    {
         unset(
             $this->dataDBPreparationMock,
             $this->dataDBProxyMock,
@@ -93,7 +112,7 @@ class InfoBuilderTest extends TestCase
      * @return void
      */
     public function testSetUpParticipants()
-    {        
+    {
         $infoBuilder = new InfoBuilder(
             $this->divisionsInfoAggregatorMock,
             $this->dataDBProxyMock,
@@ -105,17 +124,17 @@ class InfoBuilderTest extends TestCase
         $this->divisionsInfoAggregatorMock->expects($this->once())
             ->method('getPositionsInDivisions')
             ->willReturn([]);
-            
+
         $this->entitiesGeneratorMock->expects($this->once())
             ->method('getParticipants')
-            ->willReturn([]);      
-            
+            ->willReturn([]);
+
         $this->infoAggregatorMock->expects($this->once())
-            ->method('setParticipants');            
-        
+            ->method('setParticipants');
+
         $infoBuilder->setUpParticipants();
-    }  
-    
+    }
+
     /**
      * Test setUpBracket method     
      *
@@ -130,7 +149,7 @@ class InfoBuilderTest extends TestCase
             $this->dataDBPreparationMock,
             $this->infoAggregatorMock
         );
-        
+
         $this->infoAggregatorMock->expects($this->once())
             ->method('getParticipants')
             ->willReturn([]);
@@ -138,11 +157,11 @@ class InfoBuilderTest extends TestCase
         $this->entitiesGeneratorMock->expects($this->once())
             ->method('getLevel1Bracket')
             ->willReturn([]);
-            
+
         $this->entitiesGeneratorMock->expects($this->once())
             ->method('getLevel2Bracket')
             ->willReturn([]);
-            
+
         $this->entitiesGeneratorMock->expects($this->once())
             ->method('getLevel3Bracket')
             ->willReturn([]);
@@ -152,10 +171,10 @@ class InfoBuilderTest extends TestCase
             ->willReturn([]);
 
         $this->infoAggregatorMock->expects($this->once())
-            ->method('setBracket');            
+            ->method('setBracket');
 
         $this->infoAggregatorMock->expects($this->once())
-            ->method('setGames');              
+            ->method('setGames');
 
         $infoBuilder->setUpBracket();
     }
@@ -168,27 +187,27 @@ class InfoBuilderTest extends TestCase
      * @return void
      */
     public function testSetUpWinners()
-    { 
+    {
         $infoBuilder = new InfoBuilder(
             $this->divisionsInfoAggregatorMock,
             $this->dataDBProxyMock,
             $this->entitiesGeneratorMock,
             $this->dataDBPreparationMock,
             $this->infoAggregatorMock
-        );   
+        );
 
         $this->infoAggregatorMock->expects($this->once())
             ->method('getWinnersGames')
             ->willReturn([]);
-        
+
         $this->entitiesGeneratorMock->expects($this->once())
             ->method('getWinners')
             ->willReturn([]);
 
         $this->infoAggregatorMock->expects($this->once())
-            ->method('setWinners');            
+            ->method('setWinners');
 
-        $infoBuilder->setUpWinners(); 
+        $infoBuilder->setUpWinners();
     }
 
     /**
@@ -212,17 +231,17 @@ class InfoBuilderTest extends TestCase
 
         $this->divisionsInfoAggregatorMock->expects($this->once())
             ->method('getDivisions')
-            ->willReturn([]);    
-            
+            ->willReturn([]);
+
         $this->entitiesGeneratorMock->expects($this->once())
             ->method('getTeamsNames')
-            ->willReturn([]);            
-        
+            ->willReturn([]);
+
         $this->infoAggregatorMock->expects($this->once())
             ->method('setTeamsNames');
 
         $infoBuilder->setUpTeamsNames();
-    }  
+    }
 
     /**
      * Test writeDataToDB method
@@ -232,19 +251,19 @@ class InfoBuilderTest extends TestCase
      * @return void
      */
     public function testWriteDataToDB()
-    {    
+    {
         $infoBuilder = new InfoBuilder(
             $this->divisionsInfoAggregatorMock,
             $this->dataDBProxyMock,
             $this->entitiesGeneratorMock,
             $this->dataDBPreparationMock,
             $this->infoAggregatorMock
-        );   
+        );
 
         $this->infoAggregatorMock->expects($this->once())
             ->method('getParticipants')
             ->willReturn([]);
-        
+
         $this->dataDBPreparationMock->expects($this->once())
             ->method('getParticipantsDataForInsert')
             ->willReturn([]);
@@ -255,24 +274,24 @@ class InfoBuilderTest extends TestCase
         $this->infoAggregatorMock->expects($this->once())
             ->method('getBracket')
             ->willReturn([]);
-            
+
         $this->dataDBPreparationMock->expects($this->once())
             ->method('getBracketDataForInsert')
-            ->willReturn([]); 
-        
+            ->willReturn([]);
+
         $this->dataDBProxyMock->expects($this->once())
-            ->method('insertBracket');  
-            
+            ->method('insertBracket');
+
         $this->infoAggregatorMock->expects($this->once())
             ->method('getGames')
-            ->willReturn([]);   
-            
+            ->willReturn([]);
+
         $this->dataDBPreparationMock->expects($this->once())
             ->method('getGamesDataForInsert')
             ->willReturn([]);
 
         $this->dataDBProxyMock->expects($this->once())
-            ->method('insertGames');   
+            ->method('insertGames');
 
         $this->infoAggregatorMock->expects($this->once())
             ->method('getWinners')
@@ -281,11 +300,10 @@ class InfoBuilderTest extends TestCase
         $this->dataDBPreparationMock->expects($this->once())
             ->method('getWinnersDataForInsert')
             ->willReturn([]);
-            
-        $this->dataDBProxyMock->expects($this->once())
-            ->method('insertWinners');                                    
-            
-        $infoBuilder->writeDataToDB();      
 
-    }    
+        $this->dataDBProxyMock->expects($this->once())
+            ->method('insertWinners');
+
+        $infoBuilder->writeDataToDB();
+    }
 }

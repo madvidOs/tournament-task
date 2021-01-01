@@ -2,14 +2,15 @@
 
 namespace App\Src\Tournament\Services\DivisionsLogic\Instruments;
 
-class DataDBPreparation {
-
+class DataDBPreparation
+{
     /**
-     * prepare games
+     * Prepare games
      *
      * @return array
      */
-    public function getGamesDataForInsert(array $games) {        
+    public function getGamesDataForInsert(array $games)
+    {
 
         $result = [];
         foreach ($games as $divisionId => $gamesArray) {
@@ -22,19 +23,20 @@ class DataDBPreparation {
                     'goal_team2' => $ga['goalTeam2'],
                     'score_team1' => $ga['scoreTeam1'],
                     'score_team2' => $ga['scoreTeam2'],
-                ];   
-            }         
+                ];
+            }
         }
 
         return $result;
     }
 
     /**
-     * prepare positions
+     * Prepare positions
      *
      * @return array
      */
-    public function getPositionsDataForInsert(array $score, array $positions) {        
+    public function getPositionsDataForInsert(array $score, array $positions)
+    {
 
         $result = [];
 
@@ -45,8 +47,8 @@ class DataDBPreparation {
                     'id_team'   => $teamId,
                     'score'     => $data,
                     'position'  => $positions[$divisionId][$teamId],
-                ];   
-            }         
+                ];
+            }
         }
 
         return $result;

@@ -22,7 +22,7 @@ class DivisionTeam extends Model
      * @var array
      */
     protected $fillable = [
-        'id_division', 
-        'name'        
+        'id_division',
+        'name'
     ];
 }

@@ -7,18 +7,8 @@ use PHPUnit\Framework\TestCase;
 
 class InfoAggregatorTest extends TestCase
 {
-    protected function setUp(): void
-    {
-    }
-
-    protected function tearDown():void
-    {        
-        
-    }  
-
-
     /**
-     * Test setDivisions, getDivisions method
+     * Test setDivisions, getDivisions methods
      * 
      * @dataProvider divisionsDataProvider
      *
@@ -30,16 +20,17 @@ class InfoAggregatorTest extends TestCase
         $infoAggregator->setDivisions($srcDivisions); 
         $divisions = $infoAggregator->getDivisions();    
 
-        $this->assertEquals($divisions,$result);
+        $this->assertEquals($divisions, $result);
 
     }
     
 
     /**
-     * Test setTeams, getAllTeams, getTeamsByDivision,
+     * Test setTeams, getAllTeams, getTeamsInDivisions,
      *      getTeamsByDivisionId methods
      * 
      * @depends testGetSetDivisions
+     * 
      * @dataProvider teamsDataProvider
      *
      * @return void
@@ -166,12 +157,14 @@ class InfoAggregatorTest extends TestCase
         $infoAggregator->setScoreByDivisionId($divisionId, $srcScore);
         $infoAggregator->setPositionsByDivisionId($divisionId, $srcPositions);
 
-        $response = $infoAggregator->toArray([
-            'teams', 
-            'games', 
-            'score', 
-            'positions'
-        ]);
+        $response = $infoAggregator->toArray(
+            [
+                'teams', 
+                'games', 
+                'score', 
+                'positions'
+            ]
+        );
 
         //var_dump($response);exit;
 
@@ -183,6 +176,11 @@ class InfoAggregatorTest extends TestCase
     }
 
 
+    /**
+     * Divisions data provider
+     * 
+     * @return array
+     */
     public function divisionsDataProvider()
     {
         return [
@@ -211,6 +209,11 @@ class InfoAggregatorTest extends TestCase
         ];
     }
 
+    /**
+     * Teams data provider
+     * 
+     * @return array
+     */
     public function teamsDataProvider()
     {
         return [
@@ -314,6 +317,11 @@ class InfoAggregatorTest extends TestCase
         ];
     }
 
+    /**
+     * Games data provider
+     * 
+     * @return array
+     */
     public function gamesDataProvider()
     {
         return [
@@ -363,6 +371,11 @@ class InfoAggregatorTest extends TestCase
     }
 
 
+    /**
+     * Score data provider
+     * 
+     * @return array
+     */
     public function scoreDataProvider()
     {
         return [
@@ -396,6 +409,11 @@ class InfoAggregatorTest extends TestCase
     }
 
 
+    /**
+     * Positions data provider
+     * 
+     * @return array
+     */
     public function positionsDataProvider()
     {
         return [
@@ -429,6 +447,11 @@ class InfoAggregatorTest extends TestCase
     }
 
 
+    /**
+     * To array data provider
+     * 
+     * @return array
+     */
     public function toArrayDataProvider()
     {
         return [

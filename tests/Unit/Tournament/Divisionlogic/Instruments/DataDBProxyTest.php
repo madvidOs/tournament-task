@@ -17,38 +17,65 @@ class DataDBProxyTest extends TestCase
     private $divisionGameRepositoryMock;
     private $divisionPositionRepositoryMock;
 
+    /**
+     * Set up mocks
+     *     
+     * @return void
+     */
     protected function setUp(): void
-    {        
-        $this->divisionRepositoryMock = $this->getMockBuilder(DivisionRepository::class)
+    {
+        $this->divisionRepositoryMock 
+            = $this->getMockBuilder(DivisionRepository::class)
             ->disableOriginalConstructor()
-            ->onlyMethods([
-                'all',                
-            ])->getMock();
+            ->onlyMethods(
+                [
+                    'all',
+                ]
+            )->getMock();
 
-        $this->divisionTeamRepositoryMock = $this->getMockBuilder(DivisionTeamRepository::class)
+        $this->divisionTeamRepositoryMock 
+            = $this->getMockBuilder(DivisionTeamRepository::class)
             ->disableOriginalConstructor()
-            ->onlyMethods([
-                'all',                
-            ])->getMock();  
-            
-        $this->divisionGameRepositoryMock = $this->getMockBuilder(DivisionGameRepository::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
-                'truncate',
-                'insert',
-            ])->getMock();
+            ->onlyMethods(
+                [
+                    'all',
+                ]
+            )->getMock();
 
-        $this->divisionPositionRepositoryMock = $this->getMockBuilder(DivisionPositionRepository::class)
+        $this->divisionGameRepositoryMock 
+            = $this->getMockBuilder(DivisionGameRepository::class)
             ->disableOriginalConstructor()
-            ->onlyMethods([
-                'truncate',
-                'insert',
-            ])->getMock();    
+            ->onlyMethods(
+                [
+                    'truncate',
+                    'insert',
+                ]
+            )->getMock();
+
+        $this->divisionPositionRepositoryMock 
+            = $this->getMockBuilder(DivisionPositionRepository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(
+                [
+                    'truncate',
+                    'insert',
+                ]
+            )->getMock();
     }
 
-    protected function tearDown():void
-    {       
-        
+    /**
+     * Free mocks
+     *     
+     * @return void
+     */
+    protected function tearDown(): void
+    {
+        unset(
+            $this->divisionRepositoryMock,
+            $this->divisionTeamRepositoryMock,
+            $this->divisionGameRepositoryMock,
+            $this->divisionPositionRepositoryMock,
+        );
     }
 
 
@@ -60,8 +87,8 @@ class DataDBProxyTest extends TestCase
     public function testGetDivisions()
     {
         $this->divisionRepositoryMock->expects($this->once())
-            ->method('all');            
-        
+            ->method('all');
+
         $divisionsDataDBProxy = new DataDBProxy(
             $this->divisionRepositoryMock,
             $this->divisionTeamRepositoryMock,
@@ -70,7 +97,6 @@ class DataDBProxyTest extends TestCase
 
         );
         $divisionsDataDBProxy->getDivisions();
-        
     }
 
     /**
@@ -81,8 +107,8 @@ class DataDBProxyTest extends TestCase
     public function testGetTeams()
     {
         $this->divisionTeamRepositoryMock->expects($this->once())
-            ->method('all');            
-        
+            ->method('all');
+
         $divisionsDataDBProxy = new DataDBProxy(
             $this->divisionRepositoryMock,
             $this->divisionTeamRepositoryMock,
@@ -91,7 +117,6 @@ class DataDBProxyTest extends TestCase
 
         );
         $divisionsDataDBProxy->getTeams();
-        
     }
 
     /**
@@ -103,10 +128,10 @@ class DataDBProxyTest extends TestCase
     {
         $this->divisionGameRepositoryMock->expects($this->once())
             ->method('truncate');
-            
+
         $this->divisionGameRepositoryMock->expects($this->once())
-            ->method('insert');    
-        
+            ->method('insert');
+
         $divisionsDataDBProxy = new DataDBProxy(
             $this->divisionRepositoryMock,
             $this->divisionTeamRepositoryMock,
@@ -115,7 +140,6 @@ class DataDBProxyTest extends TestCase
 
         );
         $divisionsDataDBProxy->insertGames([]);
-        
     }
 
     /**
@@ -127,10 +151,10 @@ class DataDBProxyTest extends TestCase
     {
         $this->divisionPositionRepositoryMock->expects($this->once())
             ->method('truncate');
-            
+
         $this->divisionPositionRepositoryMock->expects($this->once())
-            ->method('insert');    
-        
+            ->method('insert');
+
         $divisionsDataDBProxy = new DataDBProxy(
             $this->divisionRepositoryMock,
             $this->divisionTeamRepositoryMock,
@@ -139,8 +163,5 @@ class DataDBProxyTest extends TestCase
 
         );
         $divisionsDataDBProxy->insertPositions([]);
-        
     }
-
-    
 }

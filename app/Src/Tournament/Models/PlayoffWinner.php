@@ -22,6 +22,6 @@ class PlayoffWinner extends Model
      * @var array
      */
     protected $fillable = [
-        'id_team'      
+        'id_team'
     ];
 }

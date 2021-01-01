@@ -14,9 +14,12 @@ class InfoAggregatorProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(Model::class, function ($app) {
-            return new Model();    
-        });
+        $this->app->singleton(
+            Model::class, 
+            function ($app) {
+                return new Model();
+            }
+        );
     }
 
     /**

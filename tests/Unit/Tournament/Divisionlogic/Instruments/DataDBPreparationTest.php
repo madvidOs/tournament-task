@@ -7,18 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 class DataDBPreparationTest extends TestCase
 {
-
-    protected function setUp(): void
-    {        
-
-    }
-
-    protected function tearDown():void
-    {       
-        
-    }
-
-
     /**
      * Test getGamesDataForInsert method
      * 
@@ -29,9 +17,9 @@ class DataDBPreparationTest extends TestCase
     public function testGetGamesDataForInsert(array $games, array $result)
     {
         $cook = new DataDBPreparation;
-        $insert = $cook->getGamesDataForInsert($games);        
+        $insert = $cook->getGamesDataForInsert($games);
 
-        $this->assertEquals($insert, $result);        
+        $this->assertEquals($insert, $result);
     }
 
     /**
@@ -42,30 +30,34 @@ class DataDBPreparationTest extends TestCase
      * @return void
      */
     public function testGetPositionsDataForInsert(
-        array $score, 
-        array $positions, 
+        array $score,
+        array $positions,
         array $result
     ) {
         $cook = new DataDBPreparation;
         $insert = $cook->getPositionsDataForInsert($score, $positions);
 
-        $this->assertEquals($insert, $result);        
+        $this->assertEquals($insert, $result);
     }
 
-
+    /**
+     * Games data provider
+     * 
+     * @return array
+     */
     public function gamesDataProvider()
     {
         return [
             [
                 [
-                    1 => [            
+                    1 => [
                         0 => [
                             'idTeam1' => 1,
                             'idTeam2' => 2,
                             'goalTeam1' => 0,
                             'goalTeam2' => 1,
                             'scoreTeam1' => 0,
-                            'scoreTeam2' =>1,
+                            'scoreTeam2' => 1,
                         ],
                         1 => [
                             'idTeam1' => 1,
@@ -81,7 +73,7 @@ class DataDBPreparationTest extends TestCase
                             'goalTeam1' => 1,
                             'goalTeam2' => 0,
                             'scoreTeam1' => 1,
-                            'scoreTeam2' =>0,
+                            'scoreTeam2' => 0,
                         ],
                     ]
                 ],
@@ -111,26 +103,31 @@ class DataDBPreparationTest extends TestCase
                         'goal_team1' => 1,
                         'goal_team2' => 0,
                         'score_team1' => 1,
-                        'score_team2' => 0 ,
+                        'score_team2' => 0,
                     ],
                 ]
-            ],           
+            ],
         ];
     }
 
+    /**
+     * Score data provider
+     * 
+     * @return array
+     */
     public function scorePositionsDataProvider()
     {
         return [
             [
                 [
-                    1 => [            
+                    1 => [
                         1 => 2,
                         2 => 4,
                         3 => 4
                     ]
                 ],
                 [
-                    1 => [            
+                    1 => [
                         1 => 7,
                         2 => 2,
                         3 => 3
@@ -156,9 +153,7 @@ class DataDBPreparationTest extends TestCase
                         'position' => 3,
                     ],
                 ],
-            ],           
+            ],
         ];
     }
-
-    
 }

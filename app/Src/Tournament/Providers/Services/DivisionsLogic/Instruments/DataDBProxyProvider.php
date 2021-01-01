@@ -18,14 +18,17 @@ class DataDBProxyProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(Model::class, function ($app) {
-            return new Model(
-                $app->make(DivisionRepository::class),
-                $app->make(DivisionTeamRepository::class),
-                $app->make(DivisionGameRepository::class),
-                $app->make(DivisionPositionRepository::class),
-            );    
-        });
+        $this->app->singleton(
+            Model::class, 
+            function ($app) {
+                return new Model(
+                    $app->make(DivisionRepository::class),
+                    $app->make(DivisionTeamRepository::class),
+                    $app->make(DivisionGameRepository::class),
+                    $app->make(DivisionPositionRepository::class),
+                );
+            }
+        );
     }
 
     /**

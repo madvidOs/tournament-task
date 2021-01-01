@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Src\Tournament\Services\PlayoffLogic;
 
 class InfoAggregator {
@@ -9,97 +8,116 @@ class InfoAggregator {
     private $games;
     private $winners;
     private $teamsNames;
-
-
-    public function __construct() {
-    }
+    
 
     /**
      * Set participants
-     *     
+     * 
+     * @return void    
      */
-    public function setParticipants(array $srcParticipants) {        
+    public function setParticipants(array $srcParticipants) 
+    {        
         $this->participants = $srcParticipants;    
     }
 
     /**
      * Set bracket
      *     
+     * @return void
      */
-    public function setBracket(array $bracket) {
+    public function setBracket(array $bracket) 
+    {
         $this->bracket = $bracket;
     }
 
     /**
      * Set games
-     *     
+     * 
+     * @return void    
      */
-    public function setGames(array $games) {        
+    public function setGames(array $games) 
+    {        
         $this->games   = $games;
     }
 
     /**
      * Set winners
      *
+     * @return void
      */
-    public function setWinners(array $winners) {
+    public function setWinners(array $winners) 
+    {
         $this->winners = $winners;        
     }
 
     /**
      * Set teams names
-     *     
+     *   
+     * @return void  
      */
-    public function setTeamsNames(array $teamsNames) {        
+    public function setTeamsNames(array $teamsNames) 
+    {        
         $this->teamsNames = $teamsNames;
     }
 
     /**
      * Get participants
-     *     
+     *   
+     * @return void  
      */
-    public function getParticipants() {        
+    public function getParticipants() 
+    {        
         return $this->participants;    
     }
 
     /**
      * Get bracket
      *     
+     * @return void
      */
-    public function getBracket() {        
+    public function getBracket() 
+    {        
         return $this->bracket;    
     }
 
     /**
      * Get games
-     *     
+     *  
+     * @return void   
      */
-    public function getGames() {        
+    public function getGames() 
+    {        
         return $this->games;    
     }
 
     /**
      * Get winners games
      *     
+     * @return void
      */
-    public function getWinnersGames() {        
+    public function getWinnersGames() 
+    {        
         return $this->games[3];    
     }
 
 
     /**
      * Get winners
-     *     
+     *   
+     * @return void  
      */
-    public function getWinners() {        
+    public function getWinners() 
+    {        
         return $this->winners;    
     }
 
     /**
      * Get teams names
-     *     
+     * 
+     * @return void    
      */
-    public function getTeamsNames() {        
+    public function getTeamsNames() 
+    {        
         return $this->teamsNames;    
     }
     
@@ -109,7 +127,8 @@ class InfoAggregator {
      *
      * @return array
      */
-    public function toArray(array $items) {
+    public function toArray(array $items) 
+    {
         
         $result = [];
 

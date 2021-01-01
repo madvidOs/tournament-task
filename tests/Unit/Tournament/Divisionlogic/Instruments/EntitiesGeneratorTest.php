@@ -7,17 +7,6 @@ use PHPUnit\Framework\TestCase;
 
 class EntitiesGeneratorTest extends TestCase
 {
-    protected function setUp(): void
-    {        
-
-    }
-
-    protected function tearDown():void
-    {       
-        
-    }
-
-
     /**
      * Test createGamesResults method
      * 
@@ -49,10 +38,9 @@ class EntitiesGeneratorTest extends TestCase
     public function testCountScore(array $games, $result)
     {
         $generator = new EntitiesGenerator;
-        $score = $generator->countScore($games); 
+        $score = $generator->countScore($games);
 
-        $this->assertEquals($result, $score);       
-        
+        $this->assertEquals($result, $score);
     }
 
 
@@ -68,7 +56,7 @@ class EntitiesGeneratorTest extends TestCase
         $generator = new EntitiesGenerator;
         $positions = $generator->countPositions($score);
 
-        $this->assertEquals($result, $positions);        
+        $this->assertEquals($result, $positions);
     }
 
     /**
@@ -77,14 +65,14 @@ class EntitiesGeneratorTest extends TestCase
      * @return void
      */
     public function testGenerateGame()
-    {        
+    {
         $generator = new EntitiesGenerator;
         $game = self::callMethod(
             $generator,
-            'generateGame',
-            [1,2]
+            '_generateGame',
+            [1, 2]
         );
-        
+
         $this->assertArrayHasKey('idTeam1', $game);
         $this->assertArrayHasKey('idTeam2', $game);
         $this->assertArrayHasKey('goalTeam1', $game);
@@ -93,6 +81,11 @@ class EntitiesGeneratorTest extends TestCase
         $this->assertArrayHasKey('scoreTeam2', $game);
     }
 
+    /**
+     * Teams data provider
+     * 
+     * @return array
+     */
     public function teamsDataProvider()
     {
         return [
@@ -137,22 +130,27 @@ class EntitiesGeneratorTest extends TestCase
                     'divisionId' => 1,
                     'teamName' => 'H',
                 ],
-            ]],           
+            ]],
         ];
     }
 
+    /**
+     * Games data provider
+     * 
+     * @return array
+     */
     public function gamesDataProvider()
     {
         return [
             [
-                [            
+                [
                     0 => [
                         'idTeam1' => 1,
                         'idTeam2' => 2,
                         'goalTeam1' => 0,
                         'goalTeam2' => 1,
                         'scoreTeam1' => 0,
-                        'scoreTeam2' =>1,
+                        'scoreTeam2' => 1,
                     ],
                     1 => [
                         'idTeam1' => 1,
@@ -168,7 +166,7 @@ class EntitiesGeneratorTest extends TestCase
                         'goalTeam1' => 1,
                         'goalTeam2' => 0,
                         'scoreTeam1' => 1,
-                        'scoreTeam2' =>0,
+                        'scoreTeam2' => 0,
                     ],
                 ],
                 [
@@ -176,15 +174,20 @@ class EntitiesGeneratorTest extends TestCase
                     2 => 2,
                     3 => 0,
                 ]
-            ],           
+            ],
         ];
     }
 
+    /**
+     * Score data provider
+     * 
+     * @return array
+     */
     public function scoreDataProvider()
     {
         return [
             [
-                [            
+                [
                     1 => 1,
                     2 => 2,
                     3 => 0,
@@ -192,13 +195,14 @@ class EntitiesGeneratorTest extends TestCase
                 [
                     1 => 2,
                     2 => 1,
-                    3 => 3                    
+                    3 => 3
                 ]
-            ],           
+            ],
         ];
     }
 
-    public static function callMethod($obj, $name, array $args) {
+    public static function callMethod($obj, $name, array $args)
+    {
         $class = new \ReflectionClass($obj);
         $method = $class->getMethod($name);
         $method->setAccessible(true);

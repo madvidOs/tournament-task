@@ -14,9 +14,12 @@ class DivisionTeamRepositoryProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(Model::class, function ($app) {
-            return new Model();
-        });
+        $this->app->bind(
+            Model::class,
+            function ($app) {
+                return new Model();
+            }
+        );
     }
 
     /**

@@ -22,11 +22,11 @@ class DivisionGame extends Model
      * @var array
      */
     protected $fillable = [
-        'id_team1', 
-        'id_team2', 
-        'goal_team1', 
+        'id_team1',
+        'id_team2',
+        'goal_team1',
         'goal_team2',
-        'score_team1', 
+        'score_team1',
         'score_team2'
     ];
 }

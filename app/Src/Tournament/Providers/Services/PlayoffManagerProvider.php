@@ -3,7 +3,7 @@
 namespace App\Src\Tournament\Providers\Services;
 
 use Illuminate\Support\ServiceProvider;
-use App\Src\Tournament\Services\PlayoffManager;
+use App\Src\Tournament\Services\PlayoffManager as Model;
 use App\Src\Tournament\Services\PlayoffLogic\InfoBuilder;
 
 class PlayoffManagerProvider extends ServiceProvider
@@ -15,11 +15,14 @@ class PlayoffManagerProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(PlayoffManager::class, function ($app) {
-            return new PlayoffManager(
-                $app->make(InfoBuilder::class)
-            );
-        });
+        $this->app->bind(
+            Model::class, 
+            function ($app) {
+                return new Model(
+                    $app->make(InfoBuilder::class)
+                );
+            }
+        );
     }
 
     /**

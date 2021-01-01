@@ -2,16 +2,16 @@
 
 namespace App\Src\Tournament\Services\PlayoffLogic\Instruments;
 
-class DataDBPreparation {
+class DataDBPreparation
+{
 
     /**
-     * prepare bracket
+     * Prepare bracket
      *
      * @return array
      */
-    public function getBracketDataForInsert(array $bracket) {    
-        
-        //var_dump($bracket);
+    public function getBracketDataForInsert(array $bracket)
+    {        
 
         $result = [];
         foreach ($bracket as $bracket) {
@@ -21,45 +21,42 @@ class DataDBPreparation {
                     'group_number' => $b['idGroup'],
                     'id_team' => $b['idTeam'],
                 ];
-            }    
-        }
-
-        //var_dump($result);exit;
+            }
+        }        
 
         return $result;
-    }    
+    }
 
     /**
-     * prepare participants
+     * Prepare participants
      *
      * @return array
      */
-    public function getParticipantsDataForInsert(array $participants) {        
+    public function getParticipantsDataForInsert(array $participants)
+    {
 
         $result = [];
-        //var_dump($participants);
+        
         foreach ($participants as $p) {
             $result[] = [
                 'id_team' => $p['idTeam'],
                 'id_division' => $p['idDivision'],
                 'position' => $p['position'],
-            ];            
-        }
-
-        //var_dump($result);exit;
+            ];
+        }        
 
         return $result;
-    }    
+    }
 
     /**
-     * prepare games
+     * Prepare games
      *
      * @return array
      */
-    public function getGamesDataForInsert(array $games) {        
-
+    public function getGamesDataForInsert(array $games)
+    {
         $result = [];
-        //var_dump($games);
+        
         foreach ($games as $game) {
             foreach ($game as $g) {
                 $result[] = [
@@ -68,35 +65,30 @@ class DataDBPreparation {
                     'goal_team1' => $g['goalTeam1'],
                     'goal_team2' => $g['goalTeam2'],
                     'id_group' => $g['idGroup'],
-                ];            
-            }    
-        }
-
-        //var_dump($result);exit;
+                ];
+            }
+        }        
 
         return $result;
     }
 
     /**
-     * prepare winners
+     * Prepare winners
      *
      * @return array
      */
-    public function getWinnersDataForInsert(array $winners) {        
+    public function getWinnersDataForInsert(array $winners)
+    {
 
         $result = [];
-        //var_dump($winners);
+        
         foreach ($winners as $w) {
             $result[] = [
-                'id_team' => $w['idTeam'],                
+                'id_team' => $w['idTeam'],
                 'position' => $w['position'],
-            ];            
-        }
-
-        //var_dump($result);exit;
+            ];
+        }        
 
         return $result;
     }
-    
-
 }

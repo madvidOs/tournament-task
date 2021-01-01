@@ -1,12 +1,15 @@
 <?php
 
 namespace App\Src\Tournament\Repositories;
+
 use App\Src\Tournament\Models\DivisionTeam as Model;
 use App\Src\Tournament\Repositories\Contracts\RepositoryInterface;
 
 class DivisionTeamRepository implements RepositoryInterface
 {
     /**
+     * Get class of used model
+     * 
      * @return string
      */
     public function getModelClass()
@@ -15,6 +18,8 @@ class DivisionTeamRepository implements RepositoryInterface
     }
 
     /**
+     * Get all rows of table
+     * 
      * @return Illuminate\Database\Eloquent\Collection
      */
     public function all()
@@ -22,14 +27,25 @@ class DivisionTeamRepository implements RepositoryInterface
         return Model::all();
     }
 
+    /**
+     * Truncate table
+     * 
+     * @return void
+     */
     public function truncate()
     {
         Model::truncate();
     }
 
+    /**
+     * Insert list of data
+     * 
+     * @param array $arr data
+     * 
+     * @return void
+     */
     public function insert(array $arr)
     {
         Model::insert($arr);
     }
-    
 }

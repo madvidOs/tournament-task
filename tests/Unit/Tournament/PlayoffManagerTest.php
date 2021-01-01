@@ -12,31 +12,49 @@ class PlayoffManagerTest extends TestCase
     protected $infoBuilderMock;
     protected $infoAggregatorMock;
 
+    /**
+     * Set up mocks
+     *     
+     * @return void
+     */
     protected function setUp(): void
-    {        
+    {
         $this->infoBuilderMock = $this->getMockBuilder(InfoBuilder::class)
             ->disableOriginalConstructor()
-            ->onlyMethods([
-                'setUpParticipants',
-                'setUpBracket',
-                'setUpWinners',
-                'setUpTeamsNames',                
-                'writeDataToDB',
-                'getInfoAggregator',
-            ])->getMock();
+            ->onlyMethods(
+                [
+                    'setUpParticipants',
+                    'setUpBracket',
+                    'setUpWinners',
+                    'setUpTeamsNames',
+                    'writeDataToDB',
+                    'getInfoAggregator',
+                ]
+            )->getMock();
 
         $this->infoAggregatorMock = $this->getMockBuilder(InfoAggregator::class)
             ->disableOriginalConstructor()
-            ->onlyMethods([
-                'toArray',                
-            ])->getMock();    
+            ->onlyMethods(
+                [
+                    'toArray',
+                ]
+            )->getMock();
     }
 
-    protected function tearDown():void
+    /**
+     * Free mocks
+     *     
+     * @return void
+     */
+    protected function tearDown(): void
     {
-        parent::tearDown();     
+        parent::tearDown();
+        unset(
+            $this->infoAggregatorMock,
+            $this->infoBuilderMock
+        );
     }
-    
+
 
     /**
      * Test getGamesResults method
@@ -47,32 +65,31 @@ class PlayoffManagerTest extends TestCase
     {
         $infoBuilderMock = $this->infoBuilderMock;
         $infoAggregatorMock = $this->infoAggregatorMock;
-        
-        $infoBuilderMock->expects($this->once())
-            ->method('setUpParticipants');
-        
-        $infoBuilderMock->expects($this->once())
-            ->method('setUpBracket');    
 
         $infoBuilderMock->expects($this->once())
-            ->method('setUpWinners');    
-        
+            ->method('setUpParticipants');
+
+        $infoBuilderMock->expects($this->once())
+            ->method('setUpBracket');
+
+        $infoBuilderMock->expects($this->once())
+            ->method('setUpWinners');
+
         $infoBuilderMock->expects($this->once())
             ->method('setUpTeamsNames');
-        
+
         $infoBuilderMock->expects($this->once())
-            ->method('writeDataToDB');    
+            ->method('writeDataToDB');
 
         $infoBuilderMock->expects($this->once())
             ->method('getInfoAggregator')
-            ->willReturn($infoAggregatorMock);    
-        
+            ->willReturn($infoAggregatorMock);
+
         $infoAggregatorMock->expects($this->once())
             ->method('toArray')
             ->with($this->equalTo(['bracket', 'games', 'winners', 'teamsNames']));
-        
+
         $playoffManager = new PlayoffManager($infoBuilderMock);
         $playoffManager->getGamesResults();
-
     }
 }

@@ -20,7 +20,8 @@ class PlayoffManager {
      *
      * @return array
      */
-    public function getGamesResults() {    
+    public function getGamesResults() 
+    {    
         
         $this->infoBuilder->setUpParticipants();
         $this->infoBuilder->setUpBracket();
@@ -31,11 +32,13 @@ class PlayoffManager {
 
         $infoAggregator = $this->infoBuilder->getInfoAggregator();
 
-        return $infoAggregator->toArray([
-            'bracket', 
-            'games', 
-            'winners', 
-            'teamsNames'
-        ]);
+        return $infoAggregator->toArray(
+            [
+                'bracket', 
+                'games', 
+                'winners', 
+                'teamsNames'
+            ]
+        );
     }
 }

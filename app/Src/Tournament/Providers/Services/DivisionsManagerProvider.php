@@ -3,7 +3,7 @@
 namespace App\Src\Tournament\Providers\Services;
 
 use Illuminate\Support\ServiceProvider;
-use App\Src\Tournament\Services\DivisionsManager;
+use App\Src\Tournament\Services\DivisionsManager as Model;
 use App\Src\Tournament\Services\DivisionsLogic\InfoBuilder;
 
 class DivisionsManagerProvider extends ServiceProvider
@@ -15,11 +15,14 @@ class DivisionsManagerProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(DivisionsManager::class, function ($app) {
-            return new DivisionsManager(
-                $app->make(InfoBuilder::class)
-            );
-        });
+        $this->app->bind(
+            Model::class, 
+            function ($app) {
+                return new Model(
+                    $app->make(InfoBuilder::class)
+                );
+            }
+        );
     }
 
     /**

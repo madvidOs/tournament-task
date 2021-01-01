@@ -19,14 +19,17 @@ class InfoBuilderProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(Model::class, function ($app) {
-            return new Model(
-                $app->make(DataDBProxy::class),
-                $app->make(EntitiesGenerator::class),
-                $app->make(DataDBPreparation::class),
-                $app->make(InfoAggregator::class),
-            );    
-        });
+        $this->app->singleton(
+            Model::class, 
+            function ($app) {
+                return new Model(
+                    $app->make(DataDBProxy::class),
+                    $app->make(EntitiesGenerator::class),
+                    $app->make(DataDBPreparation::class),
+                    $app->make(InfoAggregator::class),
+                );
+            }
+        );
     }
 
     /**

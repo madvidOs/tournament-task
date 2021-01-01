@@ -17,42 +17,69 @@ class DataDBProxyTest extends TestCase
     private $playoffGameRepositoryMock;
     private $playoffWinnerRepositoryMock;
 
+    /**
+     * Set up mocks
+     *     
+     * @return void
+     */
     protected function setUp(): void
-    {        
-        $this->playoffBracketRepositoryMock = $this->getMockBuilder(PlayoffBracketRepository::class)
+    {
+        $this->playoffBracketRepositoryMock 
+            = $this->getMockBuilder(PlayoffBracketRepository::class)
             ->disableOriginalConstructor()
-            ->onlyMethods([
-                'truncate',
-                'insert',               
-            ])->getMock();
+            ->onlyMethods(
+                [
+                    'truncate',
+                    'insert',
+                ]
+            )->getMock();
 
-        $this->playoffParticipantRepositoryMock = $this->getMockBuilder(PlayoffParticipantRepository::class)
+        $this->playoffParticipantRepositoryMock 
+            = $this->getMockBuilder(PlayoffParticipantRepository::class)
             ->disableOriginalConstructor()
-            ->onlyMethods([
-                'truncate',
-                'insert',               
-            ])->getMock();  
-            
-        $this->playoffGameRepositoryMock = $this->getMockBuilder(PlayoffGameRepository::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
-                'truncate',
-                'insert',
-            ])->getMock();
+            ->onlyMethods(
+                [
+                    'truncate',
+                    'insert',
+                ]
+            )->getMock();
 
-        $this->playoffWinnerRepositoryMock = $this->getMockBuilder(PlayoffWinnerRepository::class)
+        $this->playoffGameRepositoryMock 
+            = $this->getMockBuilder(PlayoffGameRepository::class)
             ->disableOriginalConstructor()
-            ->onlyMethods([
-                'truncate',
-                'insert',
-            ])->getMock();    
+            ->onlyMethods(
+                [
+                    'truncate',
+                    'insert',
+                ]
+            )->getMock();
+
+        $this->playoffWinnerRepositoryMock 
+            = $this->getMockBuilder(PlayoffWinnerRepository::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(
+                [
+                    'truncate',
+                    'insert',
+                ]
+            )->getMock();
     }
 
-    protected function tearDown():void
-    {       
-        
+    /**
+     * Free mocks
+     *     
+     * @return void
+     */
+    protected function tearDown(): void
+    {
+        unset(
+            $this->playoffBracketRepositoryMock,
+            $this->playoffParticipantRepositoryMock,
+            $this->playoffGameRepositoryMock,
+            $this->playoffWinnerRepositoryMock,
+        );
     }
-    
+
 
     /**
      * Test insertBracket method     
@@ -63,19 +90,17 @@ class DataDBProxyTest extends TestCase
     {
         $this->playoffBracketRepositoryMock->expects($this->once())
             ->method('truncate');
-            
+
         $this->playoffBracketRepositoryMock->expects($this->once())
-            ->method('insert');    
-        
+            ->method('insert');
+
         $playoffDataDBProxy = new DataDBProxy(
             $this->playoffBracketRepositoryMock,
             $this->playoffParticipantRepositoryMock,
             $this->playoffGameRepositoryMock,
             $this->playoffWinnerRepositoryMock,
-
         );
         $playoffDataDBProxy->insertBracket([]);
-        
     }
 
     /**
@@ -87,22 +112,20 @@ class DataDBProxyTest extends TestCase
     {
         $this->playoffParticipantRepositoryMock->expects($this->once())
             ->method('truncate');
-            
+
         $this->playoffParticipantRepositoryMock->expects($this->once())
-            ->method('insert');    
-        
+            ->method('insert');
+
         $playoffDataDBProxy = new DataDBProxy(
             $this->playoffBracketRepositoryMock,
             $this->playoffParticipantRepositoryMock,
             $this->playoffGameRepositoryMock,
             $this->playoffWinnerRepositoryMock,
-
         );
         $playoffDataDBProxy->insertParticipants([]);
-        
     }
 
-        /**
+    /**
      * Test insertGames method     
      *
      * @return void
@@ -111,19 +134,17 @@ class DataDBProxyTest extends TestCase
     {
         $this->playoffGameRepositoryMock->expects($this->once())
             ->method('truncate');
-            
+
         $this->playoffGameRepositoryMock->expects($this->once())
-            ->method('insert');    
-        
+            ->method('insert');
+
         $playoffDataDBProxy = new DataDBProxy(
             $this->playoffBracketRepositoryMock,
             $this->playoffParticipantRepositoryMock,
             $this->playoffGameRepositoryMock,
             $this->playoffWinnerRepositoryMock,
-
         );
         $playoffDataDBProxy->insertGames([]);
-        
     }
 
     /**
@@ -135,19 +156,16 @@ class DataDBProxyTest extends TestCase
     {
         $this->playoffWinnerRepositoryMock->expects($this->once())
             ->method('truncate');
-            
+
         $this->playoffWinnerRepositoryMock->expects($this->once())
-            ->method('insert');    
-        
+            ->method('insert');
+
         $playoffDataDBProxy = new DataDBProxy(
             $this->playoffBracketRepositoryMock,
             $this->playoffParticipantRepositoryMock,
             $this->playoffGameRepositoryMock,
             $this->playoffWinnerRepositoryMock,
-
         );
         $playoffDataDBProxy->insertWinners([]);
-        
     }
-    
 }
